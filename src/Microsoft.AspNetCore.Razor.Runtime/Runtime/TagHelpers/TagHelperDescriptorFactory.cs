@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -21,6 +22,7 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
         private const string DataDashPrefix = "data-";
         private const string TagHelperNameEnding = "TagHelper";
         private const string HtmlCaseRegexReplacement = "-$1$2";
+        private const char RequiredAttributeWildcardSuffix = '*';
 
         // This matches the following AFTER the start of the input string (MATCH).
         // Any letter/number followed by an uppercase letter then lowercase letter: 1(Aa), a(Aa), A(Aa)
@@ -153,7 +155,7 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                         typeName,
                         assemblyName,
                         attributeDescriptors,
-                        requiredAttributes: Enumerable.Empty<string>(),
+                        requiredAttributeDescriptors: Enumerable.Empty<TagHelperRequiredAttributeDescriptor>(),
                         allowedChildren: allowedChildren,
                         tagStructure: default(TagStructure),
                         parentTag: null,
@@ -235,14 +237,15 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
             IEnumerable<string> allowedChildren,
             TagHelperDesignTimeDescriptor designTimeDescriptor)
         {
-            var requiredAttributes = GetCommaSeparatedValues(targetElementAttribute.Attributes);
+            IEnumerable<TagHelperRequiredAttributeDescriptor> requiredAttributeDescriptors;
+            TryGetRequiredAttributeDescriptors(targetElementAttribute.Attributes, errorSink: null, descriptors: out requiredAttributeDescriptors);
 
             return BuildTagHelperDescriptor(
                 targetElementAttribute.Tag,
                 typeName,
                 assemblyName,
                 attributeDescriptors,
-                requiredAttributes,
+                requiredAttributeDescriptors,
                 allowedChildren,
                 targetElementAttribute.ParentTag,
                 targetElementAttribute.TagStructure,
@@ -254,7 +257,7 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
             string typeName,
             string assemblyName,
             IEnumerable<TagHelperAttributeDescriptor> attributeDescriptors,
-            IEnumerable<string> requiredAttributes,
+            IEnumerable<TagHelperRequiredAttributeDescriptor> requiredAttributeDescriptors,
             IEnumerable<string> allowedChildren,
             string parentTag,
             TagStructure tagStructure,
@@ -266,7 +269,7 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                 TypeName = typeName,
                 AssemblyName = assemblyName,
                 Attributes = attributeDescriptors,
-                RequiredAttributes = requiredAttributes,
+                RequiredAttributes = requiredAttributeDescriptors,
                 AllowedChildren = allowedChildren,
                 RequiredParent = parentTag,
                 TagStructure = tagStructure,
@@ -277,34 +280,16 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
         /// <summary>
         /// Internal for testing.
         /// </summary>
-        internal static IEnumerable<string> GetCommaSeparatedValues(string text)
-        {
-            // We don't want to remove empty entries, need to notify users of invalid values.
-            return text?.Split(',').Select(tagName => tagName.Trim()) ?? Enumerable.Empty<string>();
-        }
-
-        /// <summary>
-        /// Internal for testing.
-        /// </summary>
         internal static bool ValidHtmlTargetElementAttributeNames(
             HtmlTargetElementAttribute attribute,
             ErrorSink errorSink)
         {
             var validTagName = ValidateName(attribute.Tag, targetingAttributes: false, errorSink: errorSink);
-            var validAttributeNames = true;
-            var attributeNames = GetCommaSeparatedValues(attribute.Attributes);
-
-            foreach (var attributeName in attributeNames)
-            {
-                if (!ValidateName(attributeName, targetingAttributes: true, errorSink: errorSink))
-                {
-                    validAttributeNames = false;
-                }
-            }
-
+            IEnumerable<TagHelperRequiredAttributeDescriptor> requiredAttributeDescriptors;
+            var validRequiredAttributes = TryGetRequiredAttributeDescriptors(attribute.Attributes, errorSink, out requiredAttributeDescriptors);
             var validParentTagName = ValidateParentTagName(attribute.ParentTag, errorSink);
 
-            return validTagName && validAttributeNames && validParentTagName;
+            return validTagName && validRequiredAttributes && validParentTagName;
         }
 
         /// <summary>
@@ -325,10 +310,17 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                     errorSink: errorSink);
         }
 
-        private static bool ValidateName(
-            string name,
-            bool targetingAttributes,
-            ErrorSink errorSink)
+        private static bool TryGetRequiredAttributeDescriptors(
+            string requiredAttributes,
+            ErrorSink errorSink,
+            out IEnumerable<TagHelperRequiredAttributeDescriptor> descriptors)
+        {
+            var parser = new RequiredAttributeParser(requiredAttributes);
+
+            return parser.TryParse(errorSink, out descriptors);
+        }
+
+        private static bool ValidateName(string name, bool targetingAttributes, ErrorSink errorSink)
         {
             if (!targetingAttributes &&
                 string.Equals(
@@ -338,15 +330,6 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
             {
                 // '*' as the entire name is OK in the HtmlTargetElement catch-all case.
                 return true;
-            }
-            else if (targetingAttributes &&
-                name.EndsWith(
-                    TagHelperDescriptorProvider.RequiredAttributeWildcardSuffix,
-                    StringComparison.OrdinalIgnoreCase))
-            {
-                // A single '*' at the end of a required attribute is valid; everywhere else is invalid. Strip it from
-                // the end so we can validate the rest of the name.
-                name = name.Substring(0, name.Length - 1);
             }
 
             var targetName = targetingAttributes ?
@@ -749,6 +732,329 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
         private static string ToHtmlCase(string name)
         {
             return HtmlCaseRegex.Replace(name, HtmlCaseRegexReplacement).ToLowerInvariant();
+        }
+
+        // Internal for testing
+        internal class RequiredAttributeParser
+        {
+            private int _index;
+            private string _requiredAttributes;
+
+            public RequiredAttributeParser(string requiredAttributes)
+            {
+                _requiredAttributes = requiredAttributes;
+            }
+
+            private char Current => _requiredAttributes[_index];
+
+            private bool AtEnd => _index >= _requiredAttributes.Length;
+
+            public bool TryParse(
+                ErrorSink errorSink,
+                out IEnumerable<TagHelperRequiredAttributeDescriptor> requiredAttributeDescriptors)
+            {
+                if (_requiredAttributes == null)
+                {
+                    requiredAttributeDescriptors = Enumerable.Empty<TagHelperRequiredAttributeDescriptor>();
+                    return true;
+                }
+
+                requiredAttributeDescriptors = null;
+                var descriptors = new List<TagHelperRequiredAttributeDescriptor>();
+
+                while (!AtEnd)
+                {
+                    PassOptionalWhitespace();
+
+                    TagHelperRequiredAttributeDescriptor descriptor;
+                    if (At('['))
+                    {
+                        descriptor = ParseCSSSelector(errorSink);
+                    }
+                    else
+                    {
+                        descriptor = ParsePlainSelector(errorSink);
+                    }
+
+                    if (descriptor == null)
+                    {
+                        // Failed to create the descriptor due to an invalid required attribute.
+                        return false;
+                    }
+                    else
+                    {
+                        descriptors.Add(descriptor);
+                    }
+
+                    PassOptionalWhitespace();
+
+                    if (At(','))
+                    {
+                        Next();
+                        PassOptionalWhitespace();
+                    }
+                    else if (!AtEnd)
+                    {
+                        errorSink.OnError(SourceLocation.Zero, $"TODO: Unknown character '{Current}'. Separate required attributes with commas.", 0);
+                        return false;
+                    }
+                }
+
+                requiredAttributeDescriptors = descriptors;
+                return true;
+            }
+
+            private TagHelperRequiredAttributeDescriptor ParsePlainSelector(ErrorSink errorSink)
+            {
+                var nextSeparator = _requiredAttributes.IndexOf(',', _index);
+                string attributeName;
+
+                if (nextSeparator == -1)
+                {
+                    attributeName = _requiredAttributes.Substring(_index).Trim();
+                    _index = _requiredAttributes.Length;
+                }
+                else
+                {
+                    attributeName = _requiredAttributes.Substring(_index, nextSeparator - _index).Trim();
+                    _index = nextSeparator;
+                }
+
+                var hasWildcard = false;
+                if (attributeName[attributeName.Length - 1] == RequiredAttributeWildcardSuffix)
+                {
+                    attributeName = attributeName.Substring(0, attributeName.Length - 1);
+                    hasWildcard = true;
+                }
+
+                TagHelperRequiredAttributeDescriptor descriptor = null;
+                if (ValidateName(attributeName, targetingAttributes: true, errorSink: errorSink))
+                {
+                    descriptor = new TagHelperRequiredAttributeDescriptor
+                    {
+                        Name = attributeName
+                    };
+
+                    if (hasWildcard)
+                    {
+                        descriptor.Operator = RequiredAttributeWildcardSuffix;
+                    }
+                }
+
+                return descriptor;
+            }
+
+            private string ParseCSSAttributeName(ErrorSink errorSink)
+            {
+                var nameStartIndex = _index;
+                while (!AtEnd && !char.IsWhiteSpace(Current) && !At('=') && !At(']'))
+                {
+                    Next();
+                }
+                var nameEndIndex = _index;
+
+                PassOptionalWhitespace();
+
+                var attributeNameLength = 0;
+                if (At('='))
+                {
+                    attributeNameLength = nameEndIndex - nameStartIndex;
+
+                    // If this proves true it means there was 0 whitespace between the attribute name and the '='.
+                    // Therefore, the operator would be baked into the attribute name by default.
+                    var potentialOperator = _requiredAttributes[_index - 1];
+                    if (TagHelperRequiredAttributeDescriptor.IsSupportedCSSValueOperator(potentialOperator))
+                    {
+                        attributeNameLength--;
+                    }
+                }
+                else if (At(']'))
+                {
+                    attributeNameLength = nameEndIndex - nameStartIndex;
+                }
+                else if (NextIs('=') && TagHelperRequiredAttributeDescriptor.IsSupportedCSSValueOperator(Current))
+                {
+                    // Move past selector
+                    Next();
+                    attributeNameLength = nameEndIndex - nameStartIndex;
+                }
+                else
+                {
+                    errorSink.OnError(SourceLocation.Zero, "TODO: Create error for unknown character not matching a square braces.", 0);
+                    return null;
+                }
+
+                var attributeName = _requiredAttributes.Substring(nameStartIndex, attributeNameLength);
+
+                return attributeName;
+            }
+
+            private char ParseCSSValueOperator(ErrorSink errorSink)
+            {
+                Debug.Assert(Current == '=');
+
+                // Move past the '='
+                Next();
+                var potentialOperator = _requiredAttributes[_index - 2];
+                if (TagHelperRequiredAttributeDescriptor.IsSupportedCSSValueOperator(potentialOperator))
+                {
+                    return potentialOperator;
+                }
+
+                return '=';
+            }
+
+            private string ParseCSSValue(ErrorSink errorSink)
+            {
+                PassOptionalWhitespace();
+
+                int valueStart, valueEnd;
+                if (At('\'') || At('"'))
+                {
+                    var quote = Current;
+
+                    // Move past the quote
+                    Next();
+
+                    valueStart = _index;
+                    while (!At(quote))
+                    {
+                        if (AtEnd)
+                        {
+                            errorSink.OnError(SourceLocation.Zero, "TODO: Mismatching quotes", 0);
+                            return null;
+                        }
+
+                        Next();
+                    }
+                    valueEnd = _index;
+
+                    // Move past the end quote;
+                    Next();
+                }
+                else
+                {
+                    valueStart = _index;
+                    while (!AtEnd && !char.IsWhiteSpace(Current) && !At(']'))
+                    {
+                        Next();
+                    }
+                    valueEnd = _index;
+                }
+
+                PassOptionalWhitespace();
+
+                var value = _requiredAttributes.Substring(valueStart, valueEnd - valueStart);
+
+                return value;
+            }
+
+            private TagHelperRequiredAttributeDescriptor ParseCSSSelector(ErrorSink errorSink)
+            {
+                Debug.Assert(Current == '[');
+
+                // Move past '['.
+                Next();
+                PassOptionalWhitespace();
+
+                var attributeName = ParseCSSAttributeName(errorSink);
+
+                if (attributeName == null)
+                {
+                    // Couldn't parse attribute name.
+                    return null;
+                }
+
+                if (!ValidateName(attributeName, targetingAttributes: true, errorSink: errorSink))
+                {
+                    return null;
+                }
+
+                if (!EnsureNotAtEnd(errorSink, ']'))
+                {
+                    return null;
+                }
+
+                var valueOperator = default(char);
+                if (At('='))
+                {
+                    valueOperator = ParseCSSValueOperator(errorSink);
+                }
+
+                if (!EnsureNotAtEnd(errorSink, ']'))
+                {
+                    return null;
+                }
+
+                var value = ParseCSSValue(errorSink);
+
+                if (value == null)
+                {
+                    // Couldn't parse value
+                    return null;
+                }
+
+                if (At(']'))
+                {
+                    // Move past the ending bracket.
+                    Next();
+                }
+                else
+                {
+                    errorSink.OnError(SourceLocation.Zero, "TODO: Could not find matching ']' for required attribute.", 0);
+                    return null;
+                }
+
+                return new TagHelperRequiredAttributeDescriptor
+                {
+                    Name = attributeName,
+                    Value = value,
+                    Operator = valueOperator,
+                    IsCSSSelector = true,
+                };
+            }
+
+            private bool EnsureNotAtEnd(ErrorSink errorSink, char endCharacter)
+            {
+                if (AtEnd)
+                {
+                    errorSink.OnError(
+                        SourceLocation.Zero,
+                        $"TODO: Invalid required attribute, never encountered an ending {endCharacter}.",
+                        0);
+
+                    return false;
+                }
+
+                return true;
+            }
+
+            private void Next()
+            {
+                _index = Math.Min(_index + 1, _requiredAttributes.Length);
+            }
+
+            private bool NextIs(char c)
+            {
+                _index++;
+                var nextIs = At(c);
+                _index--;
+
+                return nextIs;
+            }
+
+            private bool At(char c)
+            {
+                return !AtEnd && Current == c;
+            }
+
+            private void PassOptionalWhitespace()
+            {
+                while (!AtEnd && char.IsWhiteSpace(Current))
+                {
+                    Next();
+                }
+            }
         }
     }
 }

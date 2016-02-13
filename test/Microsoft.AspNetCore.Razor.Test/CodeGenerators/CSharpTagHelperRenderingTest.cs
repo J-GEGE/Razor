@@ -21,6 +21,112 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
         private static IEnumerable<TagHelperDescriptor> PrefixedPAndInputTagHelperDescriptors { get; }
             = BuildPAndInputTagHelperDescriptors(prefix: "THS");
 
+        private static IEnumerable<TagHelperDescriptor> CSSSelectorTagHelperDescriptors
+        {
+            get
+            {
+                var inputTypePropertyInfo = typeof(TestType).GetProperty("Type");
+                var inputCheckedPropertyInfo = typeof(TestType).GetProperty("Checked");
+
+                return new[]
+                {
+                    new TagHelperDescriptor
+                    {
+                        TagName = "a",
+                        TypeName = "TestNamespace.ATagHelper",
+                        AssemblyName = "SomeAssembly",
+                        RequiredAttributes = new[]
+                        {
+                            new TagHelperRequiredAttributeDescriptor
+                            {
+                                IsCSSSelector = true,
+                                Name = "href",
+                                Operator = '=',
+                                Value = "~/",
+                            }
+                        },
+                    },
+                    new TagHelperDescriptor
+                    {
+                        TagName = "a",
+                        TypeName = "TestNamespace.ATagHelperMultipleSelectors",
+                        AssemblyName = "SomeAssembly",
+                        RequiredAttributes = new[]
+                        {
+                            new TagHelperRequiredAttributeDescriptor
+                            {
+                                IsCSSSelector = true,
+                                Name = "href",
+                                Operator = '^',
+                                Value = "~/",
+                            },
+                            new TagHelperRequiredAttributeDescriptor
+                            {
+                                IsCSSSelector = true,
+                                Name = "href",
+                                Operator = '$',
+                                Value = "?hello=world"
+                            }
+                        },
+                    },
+                    new TagHelperDescriptor
+                    {
+                        TagName = "input",
+                        TypeName = "TestNamespace.InputTagHelper",
+                        AssemblyName = "SomeAssembly",
+                        Attributes = new TagHelperAttributeDescriptor[]
+                        {
+                            new TagHelperAttributeDescriptor("type", inputTypePropertyInfo),
+                        },
+                        RequiredAttributes = new[]
+                        {
+                            new TagHelperRequiredAttributeDescriptor
+                            {
+                                IsCSSSelector = true,
+                                Name = "type",
+                                Operator = '=',
+                                Value = "text"
+                            }
+                        },
+                    },
+                    new TagHelperDescriptor
+                    {
+                        TagName = "input",
+                        TypeName = "TestNamespace.InputTagHelper2",
+                        AssemblyName = "SomeAssembly",
+                        Attributes = new TagHelperAttributeDescriptor[]
+                        {
+                            new TagHelperAttributeDescriptor("type", inputTypePropertyInfo),
+                        },
+                        RequiredAttributes = new[]
+                        {
+                            new TagHelperRequiredAttributeDescriptor
+                            {
+                                Name = "ty",
+                                Operator = '*'
+                            }
+                        },
+                    },
+                    new TagHelperDescriptor
+                    {
+                        TagName = "*",
+                        TypeName = "TestNamespace.CatchAllTagHelper",
+                        AssemblyName = "SomeAssembly",
+                        RequiredAttributes = new[]
+                        {
+                            new TagHelperRequiredAttributeDescriptor
+                            {
+                                IsCSSSelector = true,
+                                Name = "href",
+                                Operator = '^',
+                                Value = "~/"
+                            }
+                        },
+                    }
+                };
+            }
+        }
+
         private static IEnumerable<TagHelperDescriptor> EnumTagHelperDescriptors
         {
             get
@@ -113,7 +219,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                                 TypeName = typeof(string).FullName
                             },
                         },
-                        RequiredAttributes = new[] { "bound" },
+                        RequiredAttributes = new[] { new TagHelperRequiredAttributeDescriptor { Name = "bound" } },
                     },
                 };
             }
@@ -140,7 +246,10 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                                 IsStringProperty = true
                             }
                         },
-                        RequiredAttributes = new[] { "catchall-unbound-required" },
+                        RequiredAttributes = new[]
+                        {
+                            new TagHelperRequiredAttributeDescriptor { Name = "catchall-unbound-required" }
+                        },
                     },
                     new TagHelperDescriptor
                     {
@@ -164,7 +273,11 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                                 IsStringProperty = true
                             }
                         },
-                        RequiredAttributes = new[] { "input-bound-required-string", "input-unbound-required" },
+                        RequiredAttributes = new[]
+                        {
+                            new TagHelperRequiredAttributeDescriptor { Name = "input-bound-required-string" },
+                            new TagHelperRequiredAttributeDescriptor { Name = "input-unbound-required" }
+                        },
                     }
                 };
             }
@@ -214,7 +327,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                             new TagHelperAttributeDescriptor("type", inputTypePropertyInfo),
                             new TagHelperAttributeDescriptor("checked", inputCheckedPropertyInfo)
                         },
-                        RequiredAttributes = new[] { "type" },
+                        RequiredAttributes = new[] { new TagHelperRequiredAttributeDescriptor { Name = "type" } },
                     },
                     new TagHelperDescriptor
                     {
@@ -226,7 +339,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                             new TagHelperAttributeDescriptor("type", inputTypePropertyInfo),
                             new TagHelperAttributeDescriptor("checked", inputCheckedPropertyInfo)
                         },
-                        RequiredAttributes = new[] { "checked" },
+                        RequiredAttributes = new[] { new TagHelperRequiredAttributeDescriptor { Name = "checked" } },
                     },
                     new TagHelperDescriptor
                     {
@@ -238,7 +351,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                             new TagHelperAttributeDescriptor("type", inputTypePropertyInfo),
                             new TagHelperAttributeDescriptor("checked", inputCheckedPropertyInfo)
                         },
-                        RequiredAttributes = new[] { "type" },
+                        RequiredAttributes = new[] { new TagHelperRequiredAttributeDescriptor { Name = "type" } },
                     },
                     new TagHelperDescriptor
                     {
@@ -250,7 +363,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                             new TagHelperAttributeDescriptor("type", inputTypePropertyInfo),
                             new TagHelperAttributeDescriptor("checked", inputCheckedPropertyInfo)
                         },
-                        RequiredAttributes = new[] { "checked" },
+                        RequiredAttributes = new[] { new TagHelperRequiredAttributeDescriptor { Name = "checked" } },
                     }
                 };
             }
@@ -269,7 +382,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                         TagName = "p",
                         TypeName = "TestNamespace.PTagHelper",
                         AssemblyName = "SomeAssembly",
-                        RequiredAttributes = new[] { "class" },
+                        RequiredAttributes = new[] { new TagHelperRequiredAttributeDescriptor { Name = "class" } },
                     },
                     new TagHelperDescriptor
                     {
@@ -280,7 +393,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                         {
                             new TagHelperAttributeDescriptor("type", inputTypePropertyInfo)
                         },
-                        RequiredAttributes = new[] { "type" },
+                        RequiredAttributes = new[] { new TagHelperRequiredAttributeDescriptor { Name = "type" } },
                     },
                     new TagHelperDescriptor
                     {
@@ -292,14 +405,18 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                             new TagHelperAttributeDescriptor("type", inputTypePropertyInfo),
                             new TagHelperAttributeDescriptor("checked", inputCheckedPropertyInfo)
                         },
-                        RequiredAttributes = new[] { "type", "checked" },
+                        RequiredAttributes = new[]
+                        {
+                            new TagHelperRequiredAttributeDescriptor { Name = "type" },
+                            new TagHelperRequiredAttributeDescriptor { Name = "checked" }
+                        },
                     },
                     new TagHelperDescriptor
                     {
                         TagName = "*",
                         TypeName = "TestNamespace.CatchAllTagHelper",
                         AssemblyName = "SomeAssembly",
-                        RequiredAttributes = new[] { "catchAll" },
+                        RequiredAttributes = new[] { new TagHelperRequiredAttributeDescriptor { Name = "catchAll" } },
                     }
                 };
             }
@@ -1774,6 +1891,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                 // Note: The baseline resource name is equivalent to the test resource name.
                 return new TheoryData<string, string, IEnumerable<TagHelperDescriptor>>
                 {
+                    { "CSSSelectorTagHelperAttributes", null, CSSSelectorTagHelperDescriptors },
                     { "IncompleteTagHelper", null, DefaultPAndInputTagHelperDescriptors },
                     { "SingleTagHelper", null, DefaultPAndInputTagHelperDescriptors },
                     { "SingleTagHelperWithNewlineBeforeAttributes", null, DefaultPAndInputTagHelperDescriptors },
