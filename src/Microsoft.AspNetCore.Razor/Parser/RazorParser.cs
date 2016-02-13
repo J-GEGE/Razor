@@ -239,7 +239,7 @@ namespace Microsoft.AspNetCore.Razor.Parser
             return addOrRemoveTagHelperSpanVisitor.GetDescriptors(documentRoot);
         }
 
-        private static IEnumerable<ISyntaxTreeRewriter> GetDefaultRewriters(ParserBase markupParser)
+        internal static IEnumerable<ISyntaxTreeRewriter> GetDefaultRewriters(ParserBase markupParser)
         {
             return new ISyntaxTreeRewriter[]
             {
