@@ -31,9 +31,7 @@ namespace TestOutput
                 Instrumentation.BeginContext(62, 34, true);
                 WriteLiteral("\r\n    <input nottaghelper />\r\n    ");
                 Instrumentation.EndContext();
-                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
-                }
-                , StartTagHelperWritingScope, EndTagHelperWritingScope);
+                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test");
                 __TestNamespace_CatchAllTagHelper = CreateTagHelper<global::TestNamespace.CatchAllTagHelper>();
                 __tagHelperExecutionContext.Add(__TestNamespace_CatchAllTagHelper);
                 __tagHelperExecutionContext.AddHtmlAttribute("class", Html.Raw("btn"));
@@ -46,9 +44,7 @@ namespace TestOutput
                 Instrumentation.BeginContext(155, 6, true);
                 WriteLiteral("\r\n    ");
                 Instrumentation.EndContext();
-                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
-                }
-                , StartTagHelperWritingScope, EndTagHelperWritingScope);
+                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test");
                 __TestNamespace_InputTagHelper = CreateTagHelper<global::TestNamespace.InputTagHelper>();
                 __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper);
                 __TestNamespace_CatchAllTagHelper = CreateTagHelper<global::TestNamespace.CatchAllTagHelper>();
@@ -66,9 +62,7 @@ namespace TestOutput
                 Instrumentation.BeginContext(280, 6, true);
                 WriteLiteral("\r\n    ");
                 Instrumentation.EndContext();
-                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
-                }
-                , StartTagHelperWritingScope, EndTagHelperWritingScope);
+                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test");
                 __TestNamespace_InputTagHelper = CreateTagHelper<global::TestNamespace.InputTagHelper>();
                 __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper);
                 __TestNamespace_CatchAllTagHelper = CreateTagHelper<global::TestNamespace.CatchAllTagHelper>();
@@ -88,9 +82,7 @@ namespace TestOutput
                 Instrumentation.BeginContext(462, 6, true);
                 WriteLiteral("\r\n    ");
                 Instrumentation.EndContext();
-                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
-                }
-                , StartTagHelperWritingScope, EndTagHelperWritingScope);
+                __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test");
                 __TestNamespace_InputTagHelper = CreateTagHelper<global::TestNamespace.InputTagHelper>();
                 __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper);
                 __TestNamespace_CatchAllTagHelper = CreateTagHelper<global::TestNamespace.CatchAllTagHelper>();

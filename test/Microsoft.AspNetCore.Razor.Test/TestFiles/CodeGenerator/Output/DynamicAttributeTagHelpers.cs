@@ -26,9 +26,7 @@ namespace TestOutput
             Instrumentation.BeginContext(31, 2, true);
             WriteLiteral("\r\n");
             Instrumentation.EndContext();
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
-            }
-            , StartTagHelperWritingScope, EndTagHelperWritingScope);
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test");
             __TestNamespace_InputTagHelper = CreateTagHelper<global::TestNamespace.InputTagHelper>();
             __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper);
             BeginAddHtmlAttributeValues(__tagHelperExecutionContext, "unbound", 2);
@@ -47,9 +45,7 @@ AddHtmlAttributeValue(" ", 55, DateTime.Now, 56, 14, false);
             Instrumentation.BeginContext(73, 4, true);
             WriteLiteral("\r\n\r\n");
             Instrumentation.EndContext();
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
-            }
-            , StartTagHelperWritingScope, EndTagHelperWritingScope);
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test");
             __TestNamespace_InputTagHelper = CreateTagHelper<global::TestNamespace.InputTagHelper>();
             __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper);
             BeginAddHtmlAttributeValues(__tagHelperExecutionContext, "unbound", 2);
@@ -98,9 +94,7 @@ WriteTo(__razor_attribute_value_writer, string.Empty);
             Instrumentation.BeginContext(148, 4, true);
             WriteLiteral("\r\n\r\n");
             Instrumentation.EndContext();
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
-            }
-            , StartTagHelperWritingScope, EndTagHelperWritingScope);
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test");
             __TestNamespace_InputTagHelper = CreateTagHelper<global::TestNamespace.InputTagHelper>();
             __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper);
             StartTagHelperWritingScope(null);
@@ -131,9 +125,7 @@ AddHtmlAttributeValue(" ", 210, DateTime.Now, 211, 14, false);
             Instrumentation.BeginContext(235, 4, true);
             WriteLiteral("\r\n\r\n");
             Instrumentation.EndContext();
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
-            }
-            , StartTagHelperWritingScope, EndTagHelperWritingScope);
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test");
             __TestNamespace_InputTagHelper = CreateTagHelper<global::TestNamespace.InputTagHelper>();
             __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper);
             StartTagHelperWritingScope(null);
@@ -235,9 +227,7 @@ AddHtmlAttributeValue(" ", 404, int.MaxValue, 405, 14, false);
             Instrumentation.BeginContext(422, 4, true);
             WriteLiteral("\r\n\r\n");
             Instrumentation.EndContext();
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
-            }
-            , StartTagHelperWritingScope, EndTagHelperWritingScope);
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test");
             __TestNamespace_InputTagHelper = CreateTagHelper<global::TestNamespace.InputTagHelper>();
             __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper);
             BeginAddHtmlAttributeValues(__tagHelperExecutionContext, "unbound", 5);
@@ -267,9 +257,7 @@ AddHtmlAttributeValue(" ", 488, int.MaxValue, 489, 14, false);
             Instrumentation.BeginContext(506, 4, true);
             WriteLiteral("\r\n\r\n");
             Instrumentation.EndContext();
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test", async() => {
-            }
-            , StartTagHelperWritingScope, EndTagHelperWritingScope);
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("input", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.SelfClosing, "test");
             __TestNamespace_InputTagHelper = CreateTagHelper<global::TestNamespace.InputTagHelper>();
             __tagHelperExecutionContext.Add(__TestNamespace_InputTagHelper);
             BeginAddHtmlAttributeValues(__tagHelperExecutionContext, "unbound", 1);

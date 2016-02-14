@@ -15,6 +15,10 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
     /// </summary>
     public class TagHelperScopeManager
     {
+        private static readonly TagHelperContent _emptyTagHelperContent = new DefaultTagHelperContent();
+        private static readonly Func<Task> _noopExecuteChildContentAsync = () => Task.FromResult(0);
+        private static readonly Action<HtmlEncoder> _noopStartTagHelperWritingScope = _ => { };
+        private static readonly Func<TagHelperContent> _noopEndTagHelperWritingScope = () => _emptyTagHelperContent;
         private readonly Stack<TagHelperExecutionContext> _executionScopes;
 
         /// <summary>
@@ -23,6 +27,17 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
         public TagHelperScopeManager()
         {
             _executionScopes = new Stack<TagHelperExecutionContext>();
+        }
+
+        public TagHelperExecutionContext Begin(string tagName, TagMode tagMode, string uniqueId)
+        {
+            return Begin(
+                tagName,
+                tagMode,
+                uniqueId,
+                _noopExecuteChildContentAsync,
+                _noopStartTagHelperWritingScope,
+                _noopEndTagHelperWritingScope);
         }
 
         /// <summary>

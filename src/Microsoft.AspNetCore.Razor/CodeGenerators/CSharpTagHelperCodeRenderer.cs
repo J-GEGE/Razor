@@ -130,26 +130,31 @@ namespace Microsoft.AspNetCore.Razor.CodeGenerators
                    .Write(".")
                    .Write(tagMode.ToString())
                    .WriteParameterSeparator()
-                   .WriteStringLiteral(GenerateUniqueId())
-                   .WriteParameterSeparator();
+                   .WriteStringLiteral(GenerateUniqueId());
 
-            // We remove the target writer so TagHelper authors can retrieve content.
-            var oldWriter = _context.TargetWriterName;
-            _context.TargetWriterName = null;
-
-            using (_writer.BuildAsyncLambda(endLine: false))
+            if (ContainsChildContent(children))
             {
-                // Render all of the tag helper children.
-                _bodyVisitor.Accept(children);
+                _writer.WriteParameterSeparator();
+
+                // We remove the target writer so TagHelper authors can retrieve content.
+                var oldWriter = _context.TargetWriterName;
+                _context.TargetWriterName = null;
+
+                using (_writer.BuildAsyncLambda(endLine: false))
+                {
+                    // Render all of the tag helper children.
+                    _bodyVisitor.Accept(children);
+                }
+
+                _context.TargetWriterName = oldWriter;
+
+                _writer.WriteParameterSeparator()
+                       .Write(_tagHelperContext.StartTagHelperWritingScopeMethodName)
+                       .WriteParameterSeparator()
+                       .Write(_tagHelperContext.EndTagHelperWritingScopeMethodName);
             }
 
-            _context.TargetWriterName = oldWriter;
-
-            _writer.WriteParameterSeparator()
-                   .Write(_tagHelperContext.StartTagHelperWritingScopeMethodName)
-                   .WriteParameterSeparator()
-                   .Write(_tagHelperContext.EndTagHelperWritingScopeMethodName)
-                   .WriteEndMethodInvocation();
+            _writer.WriteEndMethodInvocation();
         }
 
         /// <summary>

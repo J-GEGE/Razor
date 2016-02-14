@@ -26,9 +26,7 @@ namespace TestOutput
             Instrumentation.BeginContext(23, 253, true);
             WriteLiteral("\r\n<ul [item]=\"items\"></ul>\r\n<ul [(item)]=\"items\"></ul>\r\n<button (click)=\"doSomething()\">Click Me</button>\r\n<button (^click)=\"doSomething()\">Click Me</button>\r\n<template *something=\"value\">\r\n</template>\r\n<div #local></div>\r\n<div #local=\"value\"></div>\r\n\r\n");
             Instrumentation.EndContext();
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("ul", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
-            }
-            , StartTagHelperWritingScope, EndTagHelperWritingScope);
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("ul", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test");
             __TestNamespace_CatchAllTagHelper = CreateTagHelper<global::TestNamespace.CatchAllTagHelper>();
             __tagHelperExecutionContext.Add(__TestNamespace_CatchAllTagHelper);
             __tagHelperExecutionContext.AddMinimizedHtmlAttribute("bound");
@@ -47,9 +45,7 @@ __TestNamespace_CatchAllTagHelper.ListItems = items;
             Instrumentation.BeginContext(321, 2, true);
             WriteLiteral("\r\n");
             Instrumentation.EndContext();
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("ul", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
-            }
-            , StartTagHelperWritingScope, EndTagHelperWritingScope);
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("ul", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test");
             __TestNamespace_CatchAllTagHelper = CreateTagHelper<global::TestNamespace.CatchAllTagHelper>();
             __tagHelperExecutionContext.Add(__TestNamespace_CatchAllTagHelper);
             __tagHelperExecutionContext.AddMinimizedHtmlAttribute("bound");
@@ -148,9 +144,7 @@ __TestNamespace_CatchAllTagHelper.Event2 = doSomething();
             Instrumentation.BeginContext(605, 2, true);
             WriteLiteral("\r\n");
             Instrumentation.EndContext();
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
-            }
-            , StartTagHelperWritingScope, EndTagHelperWritingScope);
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test");
             __TestNamespace_CatchAllTagHelper = CreateTagHelper<global::TestNamespace.CatchAllTagHelper>();
             __tagHelperExecutionContext.Add(__TestNamespace_CatchAllTagHelper);
             __tagHelperExecutionContext.AddMinimizedHtmlAttribute("bound");
@@ -163,9 +157,7 @@ __TestNamespace_CatchAllTagHelper.Event2 = doSomething();
             Instrumentation.BeginContext(640, 2, true);
             WriteLiteral("\r\n");
             Instrumentation.EndContext();
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test", async() => {
-            }
-            , StartTagHelperWritingScope, EndTagHelperWritingScope);
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("div", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "test");
             __TestNamespace_CatchAllTagHelper = CreateTagHelper<global::TestNamespace.CatchAllTagHelper>();
             __tagHelperExecutionContext.Add(__TestNamespace_CatchAllTagHelper);
             __tagHelperExecutionContext.AddMinimizedHtmlAttribute("bound");
