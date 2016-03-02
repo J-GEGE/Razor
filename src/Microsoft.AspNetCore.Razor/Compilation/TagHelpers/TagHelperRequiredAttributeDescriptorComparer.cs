@@ -16,7 +16,8 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
         /// <summary>
         /// A default instance of the <see cref="TagHelperRequiredAttributeDescriptor"/>.
         /// </summary>
-        public static readonly TagHelperRequiredAttributeDescriptorComparer Default = new TagHelperRequiredAttributeDescriptorComparer();
+        public static readonly TagHelperRequiredAttributeDescriptorComparer Default =
+            new TagHelperRequiredAttributeDescriptorComparer();
 
         /// <summary>
         /// Initializes a new <see cref="TagHelperRequiredAttributeDescriptor"/> instance.
@@ -26,7 +27,9 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
         }
 
         /// <inheritdoc />
-        public virtual bool Equals(TagHelperRequiredAttributeDescriptor descriptorX, TagHelperRequiredAttributeDescriptor descriptorY)
+        public virtual bool Equals(
+            TagHelperRequiredAttributeDescriptor descriptorX,
+            TagHelperRequiredAttributeDescriptor descriptorY)
         {
             if (descriptorX == descriptorY)
             {
@@ -35,7 +38,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
 
             return descriptorX != null &&
                 descriptorX.Operator == descriptorY.Operator &&
-                descriptorX.IsCSSSelector == descriptorY.IsCSSSelector &&
+                descriptorX.IsCssSelector == descriptorY.IsCssSelector &&
                 string.Equals(descriptorX.Name, descriptorY.Name, StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(descriptorX.Value, descriptorY.Value, StringComparison.Ordinal);
         }
@@ -45,7 +48,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
         {
             var hashCodeCombiner = HashCodeCombiner.Start();
             hashCodeCombiner.Add(descriptor.Operator);
-            hashCodeCombiner.Add(descriptor.IsCSSSelector);
+            hashCodeCombiner.Add(descriptor.IsCssSelector);
             hashCodeCombiner.Add(descriptor.Name, StringComparer.OrdinalIgnoreCase);
             hashCodeCombiner.Add(descriptor.Value, StringComparer.Ordinal);
 

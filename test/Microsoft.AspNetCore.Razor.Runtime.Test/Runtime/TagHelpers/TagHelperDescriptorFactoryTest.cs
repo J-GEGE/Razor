@@ -19,6 +19,53 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
 
         protected static readonly string AssemblyName = TagHelperDescriptorFactoryTestAssembly.Name;
 
+        public static TheoryData RequiredAttributeParserErrorData
+        {
+            get
+            {
+                Func<string, RazorError> error = (message) => new RazorError(message, SourceLocation.Zero, 0);
+
+                return new TheoryData<string, RazorError>
+                {
+                    { "name,", error(Resources.TagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute) },
+                    { " ", error(Resources.FormatHtmlTargetElementAttribute_NameCannotBeNullOrWhitespace("Attribute")) },
+                    { "n@me", error(Resources.FormatHtmlTargetElementAttribute_InvalidName("attribute", "n@me", '@')) },
+                    { "name extra", error(Resources.FormatTagHelperDescriptorFactory_InvalidRequiredAttributeCharacter('e')) },
+                    {
+                        "[name='unended]",
+                        error(Resources.FormatTagHelperDescriptorFactory_InvalidRequiredAttributeCharacterExpectedOther(']', '\''))
+                    },
+                    { "[name", error(Resources.TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace) },
+                    { "[ ]", error(Resources.FormatHtmlTargetElementAttribute_NameCannotBeNullOrWhitespace("Attribute")) },
+                    { "[n@me]", error(Resources.FormatHtmlTargetElementAttribute_InvalidName("attribute", "n@me", '@')) },
+                    { "[name='value'", error(Resources.TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace) },
+                    { "[name ", error(Resources.TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace) },
+                    { "[name=value ", error(Resources.TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace) },
+                };
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(RequiredAttributeParserErrorData))]
+        public void RequiredAttributeParser_ParsesRequiredAttributesAndLogsErrorCorrectly(
+            string requiredAttributes,
+            RazorError expectedError)
+        {
+            // Arrange
+            var parser = new TagHelperDescriptorFactory.RequiredAttributeParser(requiredAttributes);
+            var errorSink = new ErrorSink();
+            IEnumerable<TagHelperRequiredAttributeDescriptor> descriptors;
+
+            // Act
+            var parsedCorrectly = parser.TryParse(errorSink, out descriptors);
+
+            // Assert
+            Assert.False(parsedCorrectly);
+            Assert.Null(descriptors);
+            var error = Assert.Single(errorSink.Errors);
+            Assert.Equal(expectedError, error);
+        }
+
         public static TheoryData RequiredAttributeParserData
         {
             get
@@ -31,12 +78,13 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                         Name = name,
                         Value = value,
                         Operator = op,
-                        IsCSSSelector = true
+                        IsCssSelector = true
                     };
 
                 return new TheoryData<string, IEnumerable<TagHelperRequiredAttributeDescriptor>>
                 {
                     { null, Enumerable.Empty<TagHelperRequiredAttributeDescriptor>() },
+                    { string.Empty, Enumerable.Empty<TagHelperRequiredAttributeDescriptor>() },
                     { "name", new[] { plain("name", '\0') } },
                     { "name-*", new[] { plain("name-", '*') } },
                     { "  name-*   ", new[] { plain("name-", '*') } },
@@ -54,6 +102,7 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                     { "[ name ]", new[] { css("name", "", '\0') } },
                     { " [ name ] ", new[] { css("name", "", '\0') } },
                     { "[name=]", new[] { css("name", "", '=') } },
+                    { "[name='']", new[] { css("name", "", '=') } },
                     { "[name ^=]", new[] { css("name", "", '^') } },
                     { "[name=hello]", new[] { css("name", "hello", '=') } },
                     { "[name= hello]", new[] { css("name", "hello", '=') } },

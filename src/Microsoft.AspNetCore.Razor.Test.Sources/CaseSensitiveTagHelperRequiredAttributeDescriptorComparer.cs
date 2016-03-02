@@ -26,7 +26,6 @@ namespace Microsoft.AspNetCore.Razor.Test.Internal
             }
 
             Assert.True(base.Equals(descriptorX, descriptorY));
-
             Assert.Equal(descriptorX.Name, descriptorY.Name, StringComparer.Ordinal);
 
             return true;

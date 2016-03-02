@@ -27,7 +27,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                     new TagHelperRequiredAttributeDescriptor { Name = "required attribute one" },
                     new TagHelperRequiredAttributeDescriptor
                     {
-                        IsCSSSelector = true,
+                        IsCssSelector = true,
                         Name = "required attribute two",
                         Value = "something",
                         Operator = '^',
@@ -54,11 +54,11 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                 $"[{{\"{ nameof(TagHelperRequiredAttributeDescriptor.Name)}\":\"required attribute one\"," +
                 $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Value) }\":null," +
                 $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Operator) }\":\"\\u0000\"," +
-                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.IsCSSSelector) }\":false}}," +
+                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.IsCssSelector) }\":false}}," +
                 $"{{\"{ nameof(TagHelperRequiredAttributeDescriptor.Name)}\":\"required attribute two\"," +
                 $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Value) }\":\"something\"," +
                 $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Operator) }\":\"^\"," +
-                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.IsCSSSelector) }\":true}}]," +
+                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.IsCssSelector) }\":true}}]," +
                 $"\"{ nameof(TagHelperDescriptor.AllowedChildren) }\":[\"allowed child one\"]," +
                 $"\"{ nameof(TagHelperDescriptor.RequiredParent) }\":\"parent name\"," +
                 $"\"{ nameof(TagHelperDescriptor.TagStructure) }\":0," +
@@ -221,11 +221,11 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                 $"[{{\"{ nameof(TagHelperRequiredAttributeDescriptor.Name)}\":\"required attribute one\"," +
                 $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Value) }\":null," +
                 $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Operator) }\":\"\\u0000\"," +
-                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.IsCSSSelector) }\":false}}," +
+                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.IsCssSelector) }\":false}}," +
                 $"{{\"{ nameof(TagHelperRequiredAttributeDescriptor.Name)}\":\"required attribute two\"," +
                 $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Value) }\":\"something\"," +
                 $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Operator) }\":\"^\"," +
-                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.IsCSSSelector) }\":true}}]," +
+                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.IsCssSelector) }\":true}}]," +
                 $"\"{ nameof(TagHelperDescriptor.AllowedChildren) }\":[\"allowed child one\",\"allowed child two\"]," +
                 $"\"{ nameof(TagHelperDescriptor.RequiredParent) }\":\"parent name\"," +
                 $"\"{nameof(TagHelperDescriptor.TagStructure)}\":2," +
@@ -244,7 +244,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                     new TagHelperRequiredAttributeDescriptor { Name = "required attribute one" },
                     new TagHelperRequiredAttributeDescriptor
                     {
-                        IsCSSSelector = true,
+                        IsCssSelector = true,
                         Name = "required attribute two",
                         Value = "something",
                         Operator = '^',

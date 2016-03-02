@@ -737,6 +737,10 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
         // Internal for testing
         internal class RequiredAttributeParser
         {
+            private static readonly char[] InvalidPlainAttributeNameCharacters = { ' ', '\t', ',', RequiredAttributeWildcardSuffix };
+            private static readonly char[] InvalidCSSAttributeNameCharacters = (new[] { ' ', '\t', ',', ']' }).Concat(TagHelperRequiredAttributeDescriptor.SupportedCSSValueOperators).ToArray();
+            private static readonly char[] InvalidCSSQuotelessValueCharacters = { ' ', '\t', ']' };
+
             private int _index;
             private string _requiredAttributes;
 
@@ -753,7 +757,7 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                 ErrorSink errorSink,
                 out IEnumerable<TagHelperRequiredAttributeDescriptor> requiredAttributeDescriptors)
             {
-                if (_requiredAttributes == null)
+                if (string.IsNullOrEmpty(_requiredAttributes))
                 {
                     requiredAttributeDescriptors = Enumerable.Empty<TagHelperRequiredAttributeDescriptor>();
                     return true;
@@ -791,11 +795,22 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                     if (At(','))
                     {
                         Next();
-                        PassOptionalWhitespace();
+
+                        if (AtEnd)
+                        {
+                            errorSink.OnError(
+                                SourceLocation.Zero,
+                                Resources.TagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute,
+                                length: 0);
+                            return false;
+                        }
                     }
                     else if (!AtEnd)
                     {
-                        errorSink.OnError(SourceLocation.Zero, $"TODO: Unknown character '{Current}'. Separate required attributes with commas.", 0);
+                        errorSink.OnError(
+                            SourceLocation.Zero,
+                            Resources.FormatTagHelperDescriptorFactory_InvalidRequiredAttributeCharacter(Current),
+                            length: 0);
                         return false;
                     }
                 }
@@ -806,25 +821,26 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
 
             private TagHelperRequiredAttributeDescriptor ParsePlainSelector(ErrorSink errorSink)
             {
-                var nextSeparator = _requiredAttributes.IndexOf(',', _index);
+                var nameEndIndex = _requiredAttributes.IndexOfAny(InvalidPlainAttributeNameCharacters, _index);
                 string attributeName;
 
-                if (nextSeparator == -1)
+                var hasWildcard = false;
+                if (nameEndIndex == -1)
                 {
-                    attributeName = _requiredAttributes.Substring(_index).Trim();
+                    attributeName = _requiredAttributes.Substring(_index);
                     _index = _requiredAttributes.Length;
                 }
                 else
                 {
-                    attributeName = _requiredAttributes.Substring(_index, nextSeparator - _index).Trim();
-                    _index = nextSeparator;
-                }
+                    attributeName = _requiredAttributes.Substring(_index, nameEndIndex - _index);
+                    _index = nameEndIndex;
 
-                var hasWildcard = false;
-                if (attributeName[attributeName.Length - 1] == RequiredAttributeWildcardSuffix)
-                {
-                    attributeName = attributeName.Substring(0, attributeName.Length - 1);
-                    hasWildcard = true;
+                    hasWildcard = _requiredAttributes[nameEndIndex] == RequiredAttributeWildcardSuffix;
+                    if (hasWildcard)
+                    {
+                        // Move past wild card
+                        Next();
+                    }
                 }
 
                 TagHelperRequiredAttributeDescriptor descriptor = null;
@@ -847,67 +863,38 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
             private string ParseCSSAttributeName(ErrorSink errorSink)
             {
                 var nameStartIndex = _index;
-                while (!AtEnd && !char.IsWhiteSpace(Current) && !At('=') && !At(']'))
-                {
-                    Next();
-                }
-                var nameEndIndex = _index;
+                var nameEndIndex = _requiredAttributes.IndexOfAny(new char[] { ' ', '\t', ']', '=', '^', '$' }, _index);
+                nameEndIndex = nameEndIndex == -1 ? _requiredAttributes.Length : nameEndIndex;
+                _index = nameEndIndex;
 
-                PassOptionalWhitespace();
-
-                var attributeNameLength = 0;
-                if (At('='))
-                {
-                    attributeNameLength = nameEndIndex - nameStartIndex;
-
-                    // If this proves true it means there was 0 whitespace between the attribute name and the '='.
-                    // Therefore, the operator would be baked into the attribute name by default.
-                    var potentialOperator = _requiredAttributes[_index - 1];
-                    if (TagHelperRequiredAttributeDescriptor.IsSupportedCSSValueOperator(potentialOperator))
-                    {
-                        attributeNameLength--;
-                    }
-                }
-                else if (At(']'))
-                {
-                    attributeNameLength = nameEndIndex - nameStartIndex;
-                }
-                else if (NextIs('=') && TagHelperRequiredAttributeDescriptor.IsSupportedCSSValueOperator(Current))
-                {
-                    // Move past selector
-                    Next();
-                    attributeNameLength = nameEndIndex - nameStartIndex;
-                }
-                else
-                {
-                    errorSink.OnError(SourceLocation.Zero, "TODO: Create error for unknown character not matching a square braces.", 0);
-                    return null;
-                }
-
-                var attributeName = _requiredAttributes.Substring(nameStartIndex, attributeNameLength);
+                var attributeName = _requiredAttributes.Substring(nameStartIndex, nameEndIndex - nameStartIndex);
 
                 return attributeName;
             }
 
             private char ParseCSSValueOperator(ErrorSink errorSink)
             {
-                Debug.Assert(Current == '=');
+                Debug.Assert(!AtEnd);
 
-                // Move past the '='
-                Next();
-                var potentialOperator = _requiredAttributes[_index - 2];
-                if (TagHelperRequiredAttributeDescriptor.IsSupportedCSSValueOperator(potentialOperator))
+                if (TagHelperRequiredAttributeDescriptor.SupportedCSSValueOperators.Contains(Current))
                 {
-                    return potentialOperator;
+                    var op = Current;
+                    Next();
+
+                    if (op != '=' && At('='))
+                    {
+                        // Two length operator (ex: ^=). Move past the second piece
+                        Next();
+                    }
+
+                    return op;
                 }
 
-                return '=';
+                return '\0';
             }
 
             private string ParseCSSValue(ErrorSink errorSink)
             {
-                PassOptionalWhitespace();
-
                 int valueStart, valueEnd;
                 if (At('\'') || At('"'))
                 {
@@ -917,32 +904,27 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                     Next();
 
                     valueStart = _index;
-                    while (!At(quote))
+                    var quoteEndIndex = _requiredAttributes.IndexOf(quote, _index);
+                    if (quoteEndIndex == -1)
                     {
-                        if (AtEnd)
-                        {
-                            errorSink.OnError(SourceLocation.Zero, "TODO: Mismatching quotes", 0);
-                            return null;
-                        }
-
-                        Next();
+                        errorSink.OnError(
+                            SourceLocation.Zero,
+                            Resources.FormatTagHelperDescriptorFactory_InvalidRequiredAttributeCharacterExpectedOther(
+                                _requiredAttributes[_requiredAttributes.Length - 1],
+                                quote),
+                            length: 0);
+                        return null;
                     }
-                    valueEnd = _index;
-
-                    // Move past the end quote;
-                    Next();
+                    valueEnd = quoteEndIndex;
+                    _index = quoteEndIndex + 1;
                 }
                 else
                 {
                     valueStart = _index;
-                    while (!AtEnd && !char.IsWhiteSpace(Current) && !At(']'))
-                    {
-                        Next();
-                    }
-                    valueEnd = _index;
+                    var valueEndIndex = _requiredAttributes.IndexOfAny(InvalidCSSQuotelessValueCharacters, _index);
+                    valueEnd = valueEndIndex == -1 ? _requiredAttributes.Length : valueEndIndex;
+                    _index = valueEnd;
                 }
-
-                PassOptionalWhitespace();
 
                 var value = _requiredAttributes.Substring(valueStart, valueEnd - valueStart);
 
@@ -951,7 +933,7 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
 
             private TagHelperRequiredAttributeDescriptor ParseCSSSelector(ErrorSink errorSink)
             {
-                Debug.Assert(Current == '[');
+                Debug.Assert(At('['));
 
                 // Move past '['.
                 Next();
@@ -959,29 +941,25 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
 
                 var attributeName = ParseCSSAttributeName(errorSink);
 
-                if (attributeName == null)
+                if (attributeName == null ||
+                    !ValidateName(attributeName, targetingAttributes: true, errorSink: errorSink))
                 {
-                    // Couldn't parse attribute name.
+                    // Couldn't parse a valid attribute name.
                     return null;
                 }
 
-                if (!ValidateName(attributeName, targetingAttributes: true, errorSink: errorSink))
+                PassOptionalWhitespace();
+
+                if (!EnsureNotAtEnd(errorSink))
                 {
                     return null;
                 }
 
-                if (!EnsureNotAtEnd(errorSink, ']'))
-                {
-                    return null;
-                }
+                var valueOperator = ParseCSSValueOperator(errorSink);
 
-                var valueOperator = default(char);
-                if (At('='))
-                {
-                    valueOperator = ParseCSSValueOperator(errorSink);
-                }
+                PassOptionalWhitespace();
 
-                if (!EnsureNotAtEnd(errorSink, ']'))
+                if (!EnsureNotAtEnd(errorSink))
                 {
                     return null;
                 }
@@ -994,6 +972,8 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                     return null;
                 }
 
+                PassOptionalWhitespace();
+
                 if (At(']'))
                 {
                     // Move past the ending bracket.
@@ -1001,7 +981,10 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                 }
                 else
                 {
-                    errorSink.OnError(SourceLocation.Zero, "TODO: Could not find matching ']' for required attribute.", 0);
+                    errorSink.OnError(
+                        SourceLocation.Zero,
+                        Resources.TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace,
+                        length: 0);
                     return null;
                 }
 
@@ -1010,18 +993,18 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                     Name = attributeName,
                     Value = value,
                     Operator = valueOperator,
-                    IsCSSSelector = true,
+                    IsCssSelector = true,
                 };
             }
 
-            private bool EnsureNotAtEnd(ErrorSink errorSink, char endCharacter)
+            private bool EnsureNotAtEnd(ErrorSink errorSink)
             {
                 if (AtEnd)
                 {
                     errorSink.OnError(
                         SourceLocation.Zero,
-                        $"TODO: Invalid required attribute, never encountered an ending {endCharacter}.",
-                        0);
+                        Resources.TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace,
+                        length: 0);
 
                     return false;
                 }

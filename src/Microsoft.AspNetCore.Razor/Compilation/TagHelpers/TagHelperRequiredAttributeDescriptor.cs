@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
 {
@@ -11,12 +13,17 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
     public class TagHelperRequiredAttributeDescriptor
     {
         /// <summary>
+        /// Supported CSS value operators.
+        /// </summary>
+        public static readonly char[] SupportedCSSValueOperators = { '=', '^', '$' };
+
+        /// <summary>
         /// The HTML attribute name.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// The HTML attribute selector value. If <see cref="IsCSSSelector"/> is not <c>true</c>, this field is
+        /// The HTML attribute selector value. If <see cref="IsCssSelector"/> is not <c>true</c>, this field is
         /// ignored.
         /// </summary>
         public string Value { get; set; }
@@ -29,7 +36,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
         /// <summary>
         /// Indicates if the <see cref="TagHelperRequiredAttributeDescriptor"/> represents a CSS selector.
         /// </summary>
-        public bool IsCSSSelector { get; set; }
+        public bool IsCssSelector { get; set; }
 
         /// <summary>
         /// Determines if the current <see cref="TagHelperRequiredAttributeDescriptor"/> matches the given
@@ -38,13 +45,11 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
         /// <param name="attributeName">An HTML attribute name.</param>
         /// <param name="attributeValue">An HTML attribute value.</param>
         /// <returns></returns>
-        public bool Matches(string attributeName, string attributeValue)
+        public bool IsMatch(string attributeName, string attributeValue)
         {
-            if (IsCSSSelector)
+            if (IsCssSelector)
             {
-                var nameMatches = string.Equals(Name, attributeName, StringComparison.OrdinalIgnoreCase);
-
-                if (!nameMatches)
+                if (!string.Equals(Name, attributeName, StringComparison.OrdinalIgnoreCase))
                 {
                     return false;
                 }
@@ -61,8 +66,11 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                     case '=': // Value equals
                         valueMatches = string.Equals(attributeValue, Value, StringComparison.Ordinal);
                         break;
-                    default: // No value selector, force true because at least the attribute name matched.
+                    case '\0': // No value selector, force true because at least the attribute name matched.
                         valueMatches = true;
+                        break;
+                    default:
+                        Debug.Assert(false, "Unknown operator.");
                         break;
                 }
 
@@ -77,17 +85,6 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
             {
                 return string.Equals(Name, attributeName, StringComparison.OrdinalIgnoreCase);
             }
-        }
-
-        /// <summary>
-        /// Determines whether the provided <paramref name="op"/> is a supported CSS value operator.
-        /// </summary>
-        /// <param name="op">The CSS value operator</param>
-        /// <returns><c>true</c> if <paramref name="op"/> is <c>=</c>, <c>^</c> or <c>$</c>; <c>false</c> otherwise.
-        /// </returns>
-        public static bool IsSupportedCSSValueOperator(char op)
-        {
-            return op == '=' || op == '^' || op == '$';
         }
     }
 }

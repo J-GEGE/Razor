@@ -63,7 +63,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "key",
-                            IsCSSSelector = true,
+                            IsCssSelector = true,
                         },
                         "KeY",
                         "value",
@@ -73,7 +73,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "key",
-                            IsCSSSelector = true,
+                            IsCssSelector = true,
                         },
                         "keys",
                         "value",
@@ -85,7 +85,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                             Name = "key",
                             Value = "value",
                             Operator = '=',
-                            IsCSSSelector = true,
+                            IsCssSelector = true,
                         },
                         "key",
                         "value",
@@ -97,7 +97,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                             Name = "key",
                             Value = "value",
                             Operator = '=',
-                            IsCSSSelector = true,
+                            IsCssSelector = true,
                         },
                         "key",
                         "Value",
@@ -109,7 +109,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                             Name = "class",
                             Value = "btn",
                             Operator = '^',
-                            IsCSSSelector = true,
+                            IsCssSelector = true,
                         },
                         "class",
                         "btn btn-success",
@@ -121,7 +121,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                             Name = "class",
                             Value = "btn",
                             Operator = '^',
-                            IsCSSSelector = true,
+                            IsCssSelector = true,
                         },
                         "class",
                         "BTN btn-success",
@@ -133,7 +133,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                             Name = "href",
                             Value = "#navigate",
                             Operator = '$',
-                            IsCSSSelector = true,
+                            IsCssSelector = true,
                         },
                         "href",
                         "/home/index#navigate",
@@ -145,7 +145,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                             Name = "href",
                             Value = "#navigate",
                             Operator = '$',
-                            IsCSSSelector = true,
+                            IsCssSelector = true,
                         },
                         "href",
                         "/home/index#NAVigate",
@@ -164,7 +164,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
             bool expectedResult)
         {
             // Act
-            var result = requiredAttributeDescriptor.Matches(attributeName, attributeValue);
+            var result = requiredAttributeDescriptor.IsMatch(attributeName, attributeValue);
 
             // Assert
             Assert.Equal(expectedResult, result);

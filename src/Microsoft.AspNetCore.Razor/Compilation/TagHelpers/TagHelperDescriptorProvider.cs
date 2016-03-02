@@ -99,7 +99,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
             return descriptors.Where(
                 descriptor => descriptor.RequiredAttributes.All(
                     requiredAttribute => attributes.Any(
-                        attribute => requiredAttribute.Matches(attribute.Key, attribute.Value))));
+                        attribute => requiredAttribute.IsMatch(attribute.Key, attribute.Value))));
         }
 
         private void Register(TagHelperDescriptor descriptor)

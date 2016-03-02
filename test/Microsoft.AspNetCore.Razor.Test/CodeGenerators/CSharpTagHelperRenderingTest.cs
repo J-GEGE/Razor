@@ -39,7 +39,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                         {
                             new TagHelperRequiredAttributeDescriptor
                             {
-                                IsCSSSelector = true,
+                                IsCssSelector = true,
                                 Name = "href",
                                 Operator = '=',
                                 Value = "~/",
@@ -55,14 +55,14 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                         {
                             new TagHelperRequiredAttributeDescriptor
                             {
-                                IsCSSSelector = true,
+                                IsCssSelector = true,
                                 Name = "href",
                                 Operator = '^',
                                 Value = "~/",
                             },
                             new TagHelperRequiredAttributeDescriptor
                             {
-                                IsCSSSelector = true,
+                                IsCssSelector = true,
                                 Name = "href",
                                 Operator = '$',
                                 Value = "?hello=world"
@@ -82,7 +82,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                         {
                             new TagHelperRequiredAttributeDescriptor
                             {
-                                IsCSSSelector = true,
+                                IsCssSelector = true,
                                 Name = "type",
                                 Operator = '=',
                                 Value = "text"
@@ -116,7 +116,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                         {
                             new TagHelperRequiredAttributeDescriptor
                             {
-                                IsCSSSelector = true,
+                                IsCssSelector = true,
                                 Name = "href",
                                 Operator = '^',
                                 Value = "~/"
