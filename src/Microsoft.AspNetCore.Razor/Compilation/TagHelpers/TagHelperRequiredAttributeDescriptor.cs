@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Linq;
 
 namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
 {
@@ -10,6 +11,11 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
     /// </summary>
     public class TagHelperRequiredAttributeDescriptor
     {
+        /// <summary>
+        /// Supported CSS value operators.
+        /// </summary>
+        public static readonly char[] SupportedCSSValueOperators = { '=', '^', '$' };
+
         /// <summary>
         /// The HTML attribute name.
         /// </summary>
@@ -77,17 +83,6 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
             {
                 return string.Equals(Name, attributeName, StringComparison.OrdinalIgnoreCase);
             }
-        }
-
-        /// <summary>
-        /// Determines whether the provided <paramref name="op"/> is a supported CSS value operator.
-        /// </summary>
-        /// <param name="op">The CSS value operator</param>
-        /// <returns><c>true</c> if <paramref name="op"/> is <c>=</c>, <c>^</c> or <c>$</c>; <c>false</c> otherwise.
-        /// </returns>
-        public static bool IsSupportedCSSValueOperator(char op)
-        {
-            return op == '=' || op == '^' || op == '$';
         }
     }
 }

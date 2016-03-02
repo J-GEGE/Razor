@@ -19,6 +19,89 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
 
         protected static readonly string AssemblyName = TagHelperDescriptorFactoryTestAssembly.Name;
 
+        //public static TheoryData RequiredAttributeParserErrorData
+        //{
+        //    get
+        //    {
+        //        Func<string, char, TagHelperRequiredAttributeDescriptor> plain =
+        //            (name, op) => new TagHelperRequiredAttributeDescriptor { Name = name, Operator = op };
+        //        Func<string, string, char, TagHelperRequiredAttributeDescriptor> css =
+        //            (name, value, op) => new TagHelperRequiredAttributeDescriptor
+        //            {
+        //                Name = name,
+        //                Value = value,
+        //                Operator = op,
+        //                IsCSSSelector = true
+        //            };
+
+        //        return new TheoryData<string, IEnumerable<TagHelperRequiredAttributeDescriptor>>
+        //        {
+        //            { null, Enumerable.Empty<TagHelperRequiredAttributeDescriptor>() },
+        //            { "name", new[] { plain("name", '\0') } },
+        //            { "name-*", new[] { plain("name-", '*') } },
+        //            { "  name-*   ", new[] { plain("name-", '*') } },
+        //            {
+        //                "asp-route-*,valid  ,  name-*   ,extra",
+        //                new[]
+        //                {
+        //                    plain("asp-route-", '*'),
+        //                    plain("valid", '\0'),
+        //                    plain("name-", '*'),
+        //                    plain("extra", '\0'),
+        //                }
+        //            },
+        //            { "[name]", new[] { css("name", "", '\0') } },
+        //            { "[ name ]", new[] { css("name", "", '\0') } },
+        //            { " [ name ] ", new[] { css("name", "", '\0') } },
+        //            { "[name=]", new[] { css("name", "", '=') } },
+        //            { "[name ^=]", new[] { css("name", "", '^') } },
+        //            { "[name=hello]", new[] { css("name", "hello", '=') } },
+        //            { "[name= hello]", new[] { css("name", "hello", '=') } },
+        //            { "[name='hello']", new[] { css("name", "hello", '=') } },
+        //            { "[name=\"hello\"]", new[] { css("name", "hello", '=') } },
+        //            { " [ name  $= \" hello\" ]  ", new[] { css("name", " hello", '$') } },
+        //            {
+        //                "[name=\"hello\"],[other^=something ], [val = 'cool']",
+        //                new[] { css("name", "hello", '='), css("other", "something", '^'), css("val", "cool", '=') }
+        //            },
+        //            {
+        //                "asp-route-*,[name=\"hello\"],valid  ,[other^=something ],   name-*   ,[val = 'cool'],extra",
+        //                new[]
+        //                {
+        //                    plain("asp-route-", '*'),
+        //                    css("name", "hello", '='),
+        //                    plain("valid", '\0'),
+        //                    css("other", "something", '^'),
+        //                    plain("name-", '*'),
+        //                    css("val", "cool", '='),
+        //                    plain("extra", '\0'),
+        //                }
+        //            },
+        //        };
+        //    }
+        //}
+
+        //[Theory]
+        //[MemberData(nameof(RequiredAttributeParserErrorData))]
+        //public void RequiredAttributeParser_ParsesRequiredAttributesAndLogsErrorCorrectly(
+        //    string requiredAttributes,
+        //    IEnumerable<RazorError> expectedErrors)
+        //{
+        //    // Arrange
+        //    var parser = new TagHelperDescriptorFactory.RequiredAttributeParser(requiredAttributes);
+        //    var errorSink = new ErrorSink();
+        //    IEnumerable<TagHelperRequiredAttributeDescriptor> descriptors;
+
+        //    // Act
+        //    //System.Diagnostics.Debugger.Launch();
+        //    var parsedCorrectly = parser.TryParse(errorSink, out descriptors);
+
+        //    // Assert
+        //    Assert.False(parsedCorrectly);
+        //    Assert.Null(descriptors);
+        //    Assert.Equal(errorSink.Errors);
+        //}
+
         public static TheoryData RequiredAttributeParserData
         {
             get

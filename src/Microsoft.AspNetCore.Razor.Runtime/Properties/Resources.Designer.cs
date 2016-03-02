@@ -426,6 +426,70 @@ namespace Microsoft.AspNetCore.Razor.Runtime
             return string.Format(CultureInfo.CurrentCulture, GetString("ArgumentMustBeAnInstanceOf"), p0);
         }
 
+        /// <summary>
+        /// Could not find matching ']' for required attribute.
+        /// </summary>
+        internal static string TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace
+        {
+            get { return GetString("TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace"); }
+        }
+
+        /// <summary>
+        /// Could not find matching ']' for required attribute.
+        /// </summary>
+        internal static string FormatTagHelperDescriptorFactory_CouldNotFindMatchingEndBrace()
+        {
+            return GetString("TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace");
+        }
+
+        /// <summary>
+        /// Invalid required attribute character '{0}'. Separate required attributes with commas.
+        /// </summary>
+        internal static string TagHelperDescriptorFactory_InvalidRequiredAttributeCharacter
+        {
+            get { return GetString("TagHelperDescriptorFactory_InvalidRequiredAttributeCharacter"); }
+        }
+
+        /// <summary>
+        /// Invalid required attribute character '{0}'. Separate required attributes with commas.
+        /// </summary>
+        internal static string FormatTagHelperDescriptorFactory_InvalidRequiredAttributeCharacter(object p0)
+        {
+            return string.Format(CultureInfo.CurrentCulture, GetString("TagHelperDescriptorFactory_InvalidRequiredAttributeCharacter"), p0);
+        }
+
+        /// <summary>
+        /// Invalid required attribute character '{0}'. Expected '{1}'.
+        /// </summary>
+        internal static string TagHelperDescriptorFactory_InvalidRequiredAttributeCharacterExpectedOther
+        {
+            get { return GetString("TagHelperDescriptorFactory_InvalidRequiredAttributeCharacterExpectedOther"); }
+        }
+
+        /// <summary>
+        /// Invalid required attribute character '{0}'. Expected '{1}'.
+        /// </summary>
+        internal static string FormatTagHelperDescriptorFactory_InvalidRequiredAttributeCharacterExpectedOther(object p0, object p1)
+        {
+            return string.Format(CultureInfo.CurrentCulture, GetString("TagHelperDescriptorFactory_InvalidRequiredAttributeCharacterExpectedOther"), p0, p1);
+        }
+
+        /// <summary>
+        /// Reached the end of the required attribute unexpectedly. Separate required attributes with commas.
+        /// </summary>
+        internal static string TagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute
+        {
+            get { return GetString("TagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute"); }
+        }
+
+        /// <summary>
+        /// Reached the end of the required attribute unexpectedly. Separate required attributes with commas.
+        /// </summary>
+        internal static string FormatTagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute()
+        {
+            return GetString("TagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute");
+        }
+
         private static string GetString(string name, params string[] formatterNames)
         {
             var value = _resourceManager.GetString(name);
