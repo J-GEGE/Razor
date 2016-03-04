@@ -15,7 +15,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
         /// <summary>
         /// Supported CSS value operators.
         /// </summary>
-        public static readonly char[] SupportedCSSValueOperators = { '=', '^', '$' };
+        public static readonly char[] SupportedCssValueOperators = { '=', '^', '$' };
 
         /// <summary>
         /// The HTML attribute name.
@@ -76,15 +76,15 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
 
                 return valueMatches;
             }
-            else if (Operator == '*')
+
+            if (Operator == '*')
             {
-                return attributeName.Length != Name.Length &
+                // We check length to ensure Name is not the entire attributeName for the '*' operator case.
+                return attributeName.Length != Name.Length &&
                     attributeName.StartsWith(Name, StringComparison.OrdinalIgnoreCase);
             }
-            else
-            {
-                return string.Equals(Name, attributeName, StringComparison.OrdinalIgnoreCase);
-            }
+
+            return string.Equals(Name, attributeName, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

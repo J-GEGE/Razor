@@ -380,7 +380,7 @@ namespace Microsoft.AspNetCore.Razor.Parser.TagHelpers.Internal
                 }
                 else
                 {
-                    childSpan = child as Span;
+                    childSpan = (Span)child;
 
                     var afterEquals = false;
                     var atValue = false;

@@ -21,7 +21,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
         private static IEnumerable<TagHelperDescriptor> PrefixedPAndInputTagHelperDescriptors { get; }
             = BuildPAndInputTagHelperDescriptors(prefix: "THS");
 
-        private static IEnumerable<TagHelperDescriptor> CSSSelectorTagHelperDescriptors
+        private static IEnumerable<TagHelperDescriptor> CssSelectorTagHelperDescriptors
         {
             get
             {
@@ -120,6 +120,20 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                                 Name = "href",
                                 Operator = '^',
                                 Value = "~/"
+                            }
+                        },
+                    },
+                    new TagHelperDescriptor
+                    {
+                        TagName = "*",
+                        TypeName = "TestNamespace.CatchAllTagHelper2",
+                        AssemblyName = "SomeAssembly",
+                        RequiredAttributes = new[]
+                        {
+                            new TagHelperRequiredAttributeDescriptor
+                            {
+                                IsCssSelector = true,
+                                Name = "type"
                             }
                         },
                     }
@@ -1891,7 +1905,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                 // Note: The baseline resource name is equivalent to the test resource name.
                 return new TheoryData<string, string, IEnumerable<TagHelperDescriptor>>
                 {
-                    { "CSSSelectorTagHelperAttributes", null, CSSSelectorTagHelperDescriptors },
+                    { "CssSelectorTagHelperAttributes", null, CssSelectorTagHelperDescriptors },
                     { "IncompleteTagHelper", null, DefaultPAndInputTagHelperDescriptors },
                     { "SingleTagHelper", null, DefaultPAndInputTagHelperDescriptors },
                     { "SingleTagHelperWithNewlineBeforeAttributes", null, DefaultPAndInputTagHelperDescriptors },

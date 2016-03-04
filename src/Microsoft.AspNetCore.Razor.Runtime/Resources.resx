@@ -196,15 +196,15 @@
     <value>Argument must be an instance of '{0}'.</value>
   </data>
   <data name="TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace" xml:space="preserve">
-    <value>Could not find matching ']' for required attribute.</value>
+    <value>Could not find matching ']' for required attribute '{0}'.</value>
   </data>
   <data name="TagHelperDescriptorFactory_InvalidRequiredAttributeCharacter" xml:space="preserve">
-    <value>Invalid required attribute character '{0}'. Separate required attributes with commas.</value>
+    <value>Invalid required attribute character '{0}' in required attribute '{1}'. Separate required attributes with commas.</value>
   </data>
   <data name="TagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute" xml:space="preserve">
-    <value>Reached the end of the required attribute unexpectedly. Separate required attributes with commas.</value>
+    <value>Reached the end of the required attribute '{0}' unexpectedly.</value>
   </data>
-  <data name="TagHelperDescriptorFactory_InvalidRequiredAttributeCharacterExpectedOther" xml:space="preserve">
-    <value>Invalid required attribute character '{0}'. Expected '{1}'.</value>
+  <data name="TagHelperDescriptorFactory_InvalidRequiredAttributeMismatchedQuotes" xml:space="preserve">
+    <value>Required attribute '{0}' has mismatched quotes '{1}' around value.</value>
   </data>
 </root>

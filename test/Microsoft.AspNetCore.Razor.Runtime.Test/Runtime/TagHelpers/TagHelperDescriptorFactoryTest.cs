@@ -27,20 +27,26 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
 
                 return new TheoryData<string, RazorError>
                 {
-                    { "name,", error(Resources.TagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute) },
+                    { "name,", error(Resources.FormatTagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute("name,")) },
                     { " ", error(Resources.FormatHtmlTargetElementAttribute_NameCannotBeNullOrWhitespace("Attribute")) },
                     { "n@me", error(Resources.FormatHtmlTargetElementAttribute_InvalidName("attribute", "n@me", '@')) },
-                    { "name extra", error(Resources.FormatTagHelperDescriptorFactory_InvalidRequiredAttributeCharacter('e')) },
+                    { "name extra", error(Resources.FormatTagHelperDescriptorFactory_InvalidRequiredAttributeCharacter('e', "name extra")) },
+                    { "[[ ", error(Resources.FormatHtmlTargetElementAttribute_InvalidName("attribute", "[", '[')) },
+                    { "[ ", error(Resources.FormatHtmlTargetElementAttribute_NameCannotBeNullOrWhitespace("Attribute")) },
                     {
                         "[name='unended]",
-                        error(Resources.FormatTagHelperDescriptorFactory_InvalidRequiredAttributeCharacterExpectedOther(']', '\''))
+                        error(Resources.FormatTagHelperDescriptorFactory_InvalidRequiredAttributeMismatchedQuotes("[name='unended]", '\''))
                     },
-                    { "[name", error(Resources.TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace) },
+                    {
+                        "[name='unended",
+                        error(Resources.FormatTagHelperDescriptorFactory_InvalidRequiredAttributeMismatchedQuotes("[name='unended", '\''))
+                    },
+                    { "[name", error(Resources.FormatTagHelperDescriptorFactory_CouldNotFindMatchingEndBrace("[name")) },
                     { "[ ]", error(Resources.FormatHtmlTargetElementAttribute_NameCannotBeNullOrWhitespace("Attribute")) },
                     { "[n@me]", error(Resources.FormatHtmlTargetElementAttribute_InvalidName("attribute", "n@me", '@')) },
-                    { "[name='value'", error(Resources.TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace) },
-                    { "[name ", error(Resources.TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace) },
-                    { "[name=value ", error(Resources.TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace) },
+                    { "[name='value'", error(Resources.FormatTagHelperDescriptorFactory_CouldNotFindMatchingEndBrace("[name='value'")) },
+                    { "[name ", error(Resources.FormatTagHelperDescriptorFactory_CouldNotFindMatchingEndBrace("[name ")) },
+                    { "[name=value ", error(Resources.FormatTagHelperDescriptorFactory_CouldNotFindMatchingEndBrace("[name=value ")) },
                 };
             }
         }

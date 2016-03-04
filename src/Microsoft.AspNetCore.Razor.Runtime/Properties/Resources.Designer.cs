@@ -427,7 +427,7 @@ namespace Microsoft.AspNetCore.Razor.Runtime
         }
 
         /// <summary>
-        /// Could not find matching ']' for required attribute.
+        /// Could not find matching ']' for required attribute '{0}'.
         /// </summary>
         internal static string TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace
         {
@@ -435,15 +435,15 @@ namespace Microsoft.AspNetCore.Razor.Runtime
         }
 
         /// <summary>
-        /// Could not find matching ']' for required attribute.
+        /// Could not find matching ']' for required attribute '{0}'.
         /// </summary>
-        internal static string FormatTagHelperDescriptorFactory_CouldNotFindMatchingEndBrace()
+        internal static string FormatTagHelperDescriptorFactory_CouldNotFindMatchingEndBrace(object p0)
         {
-            return GetString("TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace");
+            return string.Format(CultureInfo.CurrentCulture, GetString("TagHelperDescriptorFactory_CouldNotFindMatchingEndBrace"), p0);
         }
 
         /// <summary>
-        /// Invalid required attribute character '{0}'. Separate required attributes with commas.
+        /// Invalid required attribute character '{0}' in required attribute '{1}'. Separate required attributes with commas.
         /// </summary>
         internal static string TagHelperDescriptorFactory_InvalidRequiredAttributeCharacter
         {
@@ -451,15 +451,15 @@ namespace Microsoft.AspNetCore.Razor.Runtime
         }
 
         /// <summary>
-        /// Invalid required attribute character '{0}'. Separate required attributes with commas.
+        /// Invalid required attribute character '{0}' in required attribute '{1}'. Separate required attributes with commas.
         /// </summary>
-        internal static string FormatTagHelperDescriptorFactory_InvalidRequiredAttributeCharacter(object p0)
+        internal static string FormatTagHelperDescriptorFactory_InvalidRequiredAttributeCharacter(object p0, object p1)
         {
-            return string.Format(CultureInfo.CurrentCulture, GetString("TagHelperDescriptorFactory_InvalidRequiredAttributeCharacter"), p0);
+            return string.Format(CultureInfo.CurrentCulture, GetString("TagHelperDescriptorFactory_InvalidRequiredAttributeCharacter"), p0, p1);
         }
 
         /// <summary>
-        /// Reached the end of the required attribute unexpectedly. Separate required attributes with commas.
+        /// Reached the end of the required attribute '{0}' unexpectedly.
         /// </summary>
         internal static string TagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute
         {
@@ -467,27 +467,27 @@ namespace Microsoft.AspNetCore.Razor.Runtime
         }
 
         /// <summary>
-        /// Reached the end of the required attribute unexpectedly. Separate required attributes with commas.
+        /// Reached the end of the required attribute '{0}' unexpectedly.
         /// </summary>
-        internal static string FormatTagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute()
+        internal static string FormatTagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute(object p0)
         {
-            return GetString("TagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute");
+            return string.Format(CultureInfo.CurrentCulture, GetString("TagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute"), p0);
         }
 
         /// <summary>
-        /// Invalid required attribute character '{0}'. Expected '{1}'.
+        /// Required attribute '{0}' has mismatched quotes '{1}' around value.
         /// </summary>
-        internal static string TagHelperDescriptorFactory_InvalidRequiredAttributeCharacterExpectedOther
+        internal static string TagHelperDescriptorFactory_InvalidRequiredAttributeMismatchedQuotes
         {
-            get { return GetString("TagHelperDescriptorFactory_InvalidRequiredAttributeCharacterExpectedOther"); }
+            get { return GetString("TagHelperDescriptorFactory_InvalidRequiredAttributeMismatchedQuotes"); }
         }
 
         /// <summary>
-        /// Invalid required attribute character '{0}'. Expected '{1}'.
+        /// Required attribute '{0}' has mismatched quotes '{1}' around value.
         /// </summary>
-        internal static string FormatTagHelperDescriptorFactory_InvalidRequiredAttributeCharacterExpectedOther(object p0, object p1)
+        internal static string FormatTagHelperDescriptorFactory_InvalidRequiredAttributeMismatchedQuotes(object p0, object p1)
         {
-            return string.Format(CultureInfo.CurrentCulture, GetString("TagHelperDescriptorFactory_InvalidRequiredAttributeCharacterExpectedOther"), p0, p1);
+            return string.Format(CultureInfo.CurrentCulture, GetString("TagHelperDescriptorFactory_InvalidRequiredAttributeMismatchedQuotes"), p0, p1);
         }
 
         private static string GetString(string name, params string[] formatterNames)
