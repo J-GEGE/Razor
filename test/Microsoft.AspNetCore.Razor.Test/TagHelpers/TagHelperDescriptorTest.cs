@@ -21,16 +21,20 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                 Prefix = "prefix:",
                 TagName = "tag name",
                 TypeName = "type name",
-                AssemblyName =  "assembly name",
+                AssemblyName = "assembly name",
                 RequiredAttributes = new[]
                 {
-                    new TagHelperRequiredAttributeDescriptor { Name = "required attribute one" },
                     new TagHelperRequiredAttributeDescriptor
                     {
-                        IsCssSelector = true,
+                        Name = "required attribute one",
+                        NameComparison = TagHelperRequiredAttributeNameComparison.PrefixMatch
+                    },
+                    new TagHelperRequiredAttributeDescriptor
+                    {
                         Name = "required attribute two",
+                        NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                         Value = "something",
-                        Operator = '^',
+                        ValueComparison = TagHelperRequiredAttributeValueComparison.PrefixMatch,
                     }
                 },
                 AllowedChildren = new[] { "allowed child one" },
@@ -52,13 +56,13 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                 $"\"{ nameof(TagHelperDescriptor.Attributes) }\":[]," +
                 $"\"{ nameof(TagHelperDescriptor.RequiredAttributes) }\":" +
                 $"[{{\"{ nameof(TagHelperRequiredAttributeDescriptor.Name)}\":\"required attribute one\"," +
+                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.NameComparison) }\":1," +
                 $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Value) }\":null," +
-                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Operator) }\":\"\\u0000\"," +
-                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.IsCssSelector) }\":false}}," +
+                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.ValueComparison) }\":0}}," +
                 $"{{\"{ nameof(TagHelperRequiredAttributeDescriptor.Name)}\":\"required attribute two\"," +
+                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.NameComparison) }\":0," +
                 $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Value) }\":\"something\"," +
-                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Operator) }\":\"^\"," +
-                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.IsCssSelector) }\":true}}]," +
+                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.ValueComparison) }\":2}}]," +
                 $"\"{ nameof(TagHelperDescriptor.AllowedChildren) }\":[\"allowed child one\"]," +
                 $"\"{ nameof(TagHelperDescriptor.RequiredParent) }\":\"parent name\"," +
                 $"\"{ nameof(TagHelperDescriptor.TagStructure) }\":0," +
@@ -219,13 +223,13 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                 $"\"{nameof(TagHelperDescriptor.Attributes)}\":[]," +
                 $"\"{ nameof(TagHelperDescriptor.RequiredAttributes) }\":" +
                 $"[{{\"{ nameof(TagHelperRequiredAttributeDescriptor.Name)}\":\"required attribute one\"," +
+                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.NameComparison) }\":1," +
                 $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Value) }\":null," +
-                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Operator) }\":\"\\u0000\"," +
-                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.IsCssSelector) }\":false}}," +
+                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.ValueComparison) }\":0}}," +
                 $"{{\"{ nameof(TagHelperRequiredAttributeDescriptor.Name)}\":\"required attribute two\"," +
+                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.NameComparison) }\":0," +
                 $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Value) }\":\"something\"," +
-                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.Operator) }\":\"^\"," +
-                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.IsCssSelector) }\":true}}]," +
+                $"\"{ nameof(TagHelperRequiredAttributeDescriptor.ValueComparison) }\":2}}]," +
                 $"\"{ nameof(TagHelperDescriptor.AllowedChildren) }\":[\"allowed child one\",\"allowed child two\"]," +
                 $"\"{ nameof(TagHelperDescriptor.RequiredParent) }\":\"parent name\"," +
                 $"\"{nameof(TagHelperDescriptor.TagStructure)}\":2," +
@@ -241,13 +245,17 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                 AssemblyName = "assembly name",
                 RequiredAttributes = new[]
                 {
-                    new TagHelperRequiredAttributeDescriptor { Name = "required attribute one" },
                     new TagHelperRequiredAttributeDescriptor
                     {
-                        IsCssSelector = true,
+                        Name = "required attribute one",
+                        NameComparison = TagHelperRequiredAttributeNameComparison.PrefixMatch
+                    },
+                    new TagHelperRequiredAttributeDescriptor
+                    {
                         Name = "required attribute two",
+                        NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                         Value = "something",
-                        Operator = '^',
+                        ValueComparison = TagHelperRequiredAttributeValueComparison.PrefixMatch,
                     }
                 },
                 AllowedChildren = new[] { "allowed child one", "allowed child two" },

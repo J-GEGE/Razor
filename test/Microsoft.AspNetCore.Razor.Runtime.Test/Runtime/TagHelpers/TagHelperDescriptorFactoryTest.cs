@@ -76,60 +76,68 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
         {
             get
             {
-                Func<string, char, TagHelperRequiredAttributeDescriptor> plain =
-                    (name, op) => new TagHelperRequiredAttributeDescriptor { Name = name, Operator = op };
-                Func<string, string, char, TagHelperRequiredAttributeDescriptor> css =
-                    (name, value, op) => new TagHelperRequiredAttributeDescriptor
+                Func<string, TagHelperRequiredAttributeNameComparison, TagHelperRequiredAttributeDescriptor> plain =
+                    (name, nameComparison) => new TagHelperRequiredAttributeDescriptor
                     {
                         Name = name,
+                        NameComparison = nameComparison
+                    };
+                Func<string, string, TagHelperRequiredAttributeValueComparison, TagHelperRequiredAttributeDescriptor> css =
+                    (name, value, valueComparison) => new TagHelperRequiredAttributeDescriptor
+                    {
+                        Name = name,
+                        NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                         Value = value,
-                        Operator = op,
-                        IsCssSelector = true
+                        ValueComparison = valueComparison,
                     };
 
                 return new TheoryData<string, IEnumerable<TagHelperRequiredAttributeDescriptor>>
                 {
                     { null, Enumerable.Empty<TagHelperRequiredAttributeDescriptor>() },
                     { string.Empty, Enumerable.Empty<TagHelperRequiredAttributeDescriptor>() },
-                    { "name", new[] { plain("name", '\0') } },
-                    { "name-*", new[] { plain("name-", '*') } },
-                    { "  name-*   ", new[] { plain("name-", '*') } },
+                    { "name", new[] { plain("name", TagHelperRequiredAttributeNameComparison.FullMatch) } },
+                    { "name-*", new[] { plain("name-", TagHelperRequiredAttributeNameComparison.PrefixMatch) } },
+                    { "  name-*   ", new[] { plain("name-", TagHelperRequiredAttributeNameComparison.PrefixMatch) } },
                     {
                         "asp-route-*,valid  ,  name-*   ,extra",
                         new[]
                         {
-                            plain("asp-route-", '*'),
-                            plain("valid", '\0'),
-                            plain("name-", '*'),
-                            plain("extra", '\0'),
+                            plain("asp-route-", TagHelperRequiredAttributeNameComparison.PrefixMatch),
+                            plain("valid", TagHelperRequiredAttributeNameComparison.FullMatch),
+                            plain("name-", TagHelperRequiredAttributeNameComparison.PrefixMatch),
+                            plain("extra", TagHelperRequiredAttributeNameComparison.FullMatch),
                         }
                     },
-                    { "[name]", new[] { css("name", "", '\0') } },
-                    { "[ name ]", new[] { css("name", "", '\0') } },
-                    { " [ name ] ", new[] { css("name", "", '\0') } },
-                    { "[name=]", new[] { css("name", "", '=') } },
-                    { "[name='']", new[] { css("name", "", '=') } },
-                    { "[name ^=]", new[] { css("name", "", '^') } },
-                    { "[name=hello]", new[] { css("name", "hello", '=') } },
-                    { "[name= hello]", new[] { css("name", "hello", '=') } },
-                    { "[name='hello']", new[] { css("name", "hello", '=') } },
-                    { "[name=\"hello\"]", new[] { css("name", "hello", '=') } },
-                    { " [ name  $= \" hello\" ]  ", new[] { css("name", " hello", '$') } },
+                    { "[name]", new[] { css("name", "", TagHelperRequiredAttributeValueComparison.None) } },
+                    { "[ name ]", new[] { css("name", "", TagHelperRequiredAttributeValueComparison.None) } },
+                    { " [ name ] ", new[] { css("name", "", TagHelperRequiredAttributeValueComparison.None) } },
+                    { "[name=]", new[] { css("name", "", TagHelperRequiredAttributeValueComparison.FullMatch) } },
+                    { "[name='']", new[] { css("name", "", TagHelperRequiredAttributeValueComparison.FullMatch) } },
+                    { "[name ^=]", new[] { css("name", "", TagHelperRequiredAttributeValueComparison.PrefixMatch) } },
+                    { "[name=hello]", new[] { css("name", "hello", TagHelperRequiredAttributeValueComparison.FullMatch) } },
+                    { "[name= hello]", new[] { css("name", "hello", TagHelperRequiredAttributeValueComparison.FullMatch) } },
+                    { "[name='hello']", new[] { css("name", "hello", TagHelperRequiredAttributeValueComparison.FullMatch) } },
+                    { "[name=\"hello\"]", new[] { css("name", "hello", TagHelperRequiredAttributeValueComparison.FullMatch) } },
+                    { " [ name  $= \" hello\" ]  ", new[] { css("name", " hello", TagHelperRequiredAttributeValueComparison.SuffixMatch) } },
                     {
                         "[name=\"hello\"],[other^=something ], [val = 'cool']",
-                        new[] { css("name", "hello", '='), css("other", "something", '^'), css("val", "cool", '=') }
+                        new[]
+                        {
+                            css("name", "hello", TagHelperRequiredAttributeValueComparison.FullMatch),
+                            css("other", "something", TagHelperRequiredAttributeValueComparison.PrefixMatch),
+                            css("val", "cool", TagHelperRequiredAttributeValueComparison.FullMatch) }
                     },
                     {
                         "asp-route-*,[name=\"hello\"],valid  ,[other^=something ],   name-*   ,[val = 'cool'],extra",
                         new[]
                         {
-                            plain("asp-route-", '*'),
-                            css("name", "hello", '='),
-                            plain("valid", '\0'),
-                            css("other", "something", '^'),
-                            plain("name-", '*'),
-                            css("val", "cool", '='),
-                            plain("extra", '\0'),
+                            plain("asp-route-", TagHelperRequiredAttributeNameComparison.PrefixMatch),
+                            css("name", "hello", TagHelperRequiredAttributeValueComparison.FullMatch),
+                            plain("valid", TagHelperRequiredAttributeNameComparison.FullMatch),
+                            css("other", "something", TagHelperRequiredAttributeValueComparison.PrefixMatch),
+                            plain("name-", TagHelperRequiredAttributeNameComparison.PrefixMatch),
+                            css("val", "cool", TagHelperRequiredAttributeValueComparison.FullMatch),
+                            plain("extra", TagHelperRequiredAttributeNameComparison.FullMatch),
                         }
                     },
                 };
@@ -950,7 +958,7 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                                     new TagHelperRequiredAttributeDescriptor
                                     {
                                         Name = "class",
-                                        Operator = '*'
+                                        NameComparison = TagHelperRequiredAttributeNameComparison.PrefixMatch,
                                     }
                                 })
                         }
@@ -969,12 +977,12 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                                     new TagHelperRequiredAttributeDescriptor
                                     {
                                         Name = "class",
-                                        Operator = '*'
+                                        NameComparison = TagHelperRequiredAttributeNameComparison.PrefixMatch,
                                     },
                                     new TagHelperRequiredAttributeDescriptor
                                     {
                                         Name = "style",
-                                        Operator = '*'
+                                        NameComparison = TagHelperRequiredAttributeNameComparison.PrefixMatch,
                                     }
                                     })
                         }

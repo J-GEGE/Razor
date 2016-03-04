@@ -737,9 +737,16 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
         // Internal for testing
         internal class RequiredAttributeParser
         {
+            private static readonly IReadOnlyDictionary<char, TagHelperRequiredAttributeValueComparison> CssValueComparisons =
+                new Dictionary<char, TagHelperRequiredAttributeValueComparison>
+                {
+                    { '=', TagHelperRequiredAttributeValueComparison.FullMatch },
+                    { '^', TagHelperRequiredAttributeValueComparison.PrefixMatch },
+                    { '$', TagHelperRequiredAttributeValueComparison.SuffixMatch }
+                };
             private static readonly char[] InvalidPlainAttributeNameCharacters = { ' ', '\t', ',', RequiredAttributeWildcardSuffix };
             private static readonly char[] InvalidCssAttributeNameCharacters = (new[] { ' ', '\t', ',', ']' })
-                .Concat(TagHelperRequiredAttributeDescriptor.SupportedCssValueOperators)
+                .Concat(CssValueComparisons.Keys)
                 .ToArray();
             private static readonly char[] InvalidCssQuotelessValueCharacters = { ' ', '\t', ']' };
 
@@ -826,7 +833,7 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                 var nameEndIndex = _requiredAttributes.IndexOfAny(InvalidPlainAttributeNameCharacters, _index);
                 string attributeName;
 
-                var hasWildcard = false;
+                var nameComparison = TagHelperRequiredAttributeNameComparison.FullMatch;
                 if (nameEndIndex == -1)
                 {
                     attributeName = _requiredAttributes.Substring(_index);
@@ -837,9 +844,10 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                     attributeName = _requiredAttributes.Substring(_index, nameEndIndex - _index);
                     _index = nameEndIndex;
 
-                    hasWildcard = _requiredAttributes[nameEndIndex] == RequiredAttributeWildcardSuffix;
-                    if (hasWildcard)
+                    if (_requiredAttributes[nameEndIndex] == RequiredAttributeWildcardSuffix)
                     {
+                        nameComparison = TagHelperRequiredAttributeNameComparison.PrefixMatch;
+
                         // Move past wild card
                         _index++;
                     }
@@ -850,13 +858,9 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                 {
                     descriptor = new TagHelperRequiredAttributeDescriptor
                     {
-                        Name = attributeName
+                        Name = attributeName,
+                        NameComparison = nameComparison
                     };
-
-                    if (hasWildcard)
-                    {
-                        descriptor.Operator = RequiredAttributeWildcardSuffix;
-                    }
                 }
 
                 return descriptor;
@@ -874,12 +878,14 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                 return attributeName;
             }
 
-            private char ParseCssValueOperator(ErrorSink errorSink)
+            private TagHelperRequiredAttributeValueComparison ParseCssValueComparison(ErrorSink errorSink)
             {
                 Debug.Assert(!AtEnd);
+                var valueComparison = TagHelperRequiredAttributeValueComparison.None;
 
-                if (TagHelperRequiredAttributeDescriptor.SupportedCssValueOperators.Contains(Current))
+                if (CssValueComparisons.ContainsKey(Current))
                 {
+                    valueComparison = CssValueComparisons[Current];
                     var op = Current;
                     _index++;
 
@@ -888,11 +894,9 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                         // Two length operator (ex: ^=). Move past the second piece
                         _index++;
                     }
-
-                    return op;
                 }
 
-                return '\0';
+                return valueComparison;
             }
 
             private string ParseCssValue(ErrorSink errorSink)
@@ -958,7 +962,7 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                     return null;
                 }
 
-                var valueOperator = ParseCssValueOperator(errorSink);
+                var valueComparison = ParseCssValueComparison(errorSink);
 
                 PassOptionalWhitespace();
 
@@ -994,9 +998,9 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                 return new TagHelperRequiredAttributeDescriptor
                 {
                     Name = attributeName,
+                    NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                     Value = value,
-                    Operator = valueOperator,
-                    IsCssSelector = true,
+                    ValueComparison = valueComparison,
                 };
             }
 

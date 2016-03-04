@@ -13,30 +13,24 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
     public class TagHelperRequiredAttributeDescriptor
     {
         /// <summary>
-        /// Supported CSS value operators.
-        /// </summary>
-        public static readonly char[] SupportedCssValueOperators = { '=', '^', '$' };
-
-        /// <summary>
         /// The HTML attribute name.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// The HTML attribute selector value. If <see cref="IsCssSelector"/> is not <c>true</c>, this field is
-        /// ignored.
+        /// The comparison method to use for <see cref="Name"/> when determining if an HTML attribute name matches.
+        /// </summary>
+        public TagHelperRequiredAttributeNameComparison NameComparison { get; set; }
+
+        /// <summary>
+        /// The HTML attribute value.
         /// </summary>
         public string Value { get; set; }
 
         /// <summary>
-        /// An operator that modifies how a required attribute is applied to an HTML attribute value or name.
+        /// The comparison method to use for <see cref="Value"/> when determining if an HTML attribute value matches.
         /// </summary>
-        public char Operator { get; set; }
-
-        /// <summary>
-        /// Indicates if the <see cref="TagHelperRequiredAttributeDescriptor"/> represents a CSS selector.
-        /// </summary>
-        public bool IsCssSelector { get; set; }
+        public TagHelperRequiredAttributeValueComparison ValueComparison { get; set; }
 
         /// <summary>
         /// Determines if the current <see cref="TagHelperRequiredAttributeDescriptor"/> matches the given
@@ -44,47 +38,44 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
         /// </summary>
         /// <param name="attributeName">An HTML attribute name.</param>
         /// <param name="attributeValue">An HTML attribute value.</param>
-        /// <returns></returns>
+        /// <returns><c>true</c> if the current <see cref="TagHelperRequiredAttributeDescriptor"/> matches 
+        /// <paramref name="attributeName"/> and <paramref name="attributeValue"/>; <c>false</c> otherwise.</returns>
         public bool IsMatch(string attributeName, string attributeValue)
         {
-            if (IsCssSelector)
+            var nameMatches = false;
+            if (NameComparison == TagHelperRequiredAttributeNameComparison.FullMatch)
             {
-                if (!string.Equals(Name, attributeName, StringComparison.OrdinalIgnoreCase))
-                {
-                    return false;
-                }
-
-                var valueMatches = false;
-                switch (Operator)
-                {
-                    case '^': // Value starts with
-                        valueMatches = attributeValue.StartsWith(Value, StringComparison.Ordinal);
-                        break;
-                    case '$': // Value ends with
-                        valueMatches = attributeValue.EndsWith(Value, StringComparison.Ordinal);
-                        break;
-                    case '=': // Value equals
-                        valueMatches = string.Equals(attributeValue, Value, StringComparison.Ordinal);
-                        break;
-                    case '\0': // No value selector, force true because at least the attribute name matched.
-                        valueMatches = true;
-                        break;
-                    default:
-                        Debug.Assert(false, "Unknown operator.");
-                        break;
-                }
-
-                return valueMatches;
+                nameMatches = string.Equals(Name, attributeName, StringComparison.OrdinalIgnoreCase);
             }
-
-            if (Operator == '*')
+            else if (NameComparison == TagHelperRequiredAttributeNameComparison.PrefixMatch)
             {
-                // We check length to ensure Name is not the entire attributeName for the '*' operator case.
-                return attributeName.Length != Name.Length &&
+                nameMatches = attributeName.Length != Name.Length &&
                     attributeName.StartsWith(Name, StringComparison.OrdinalIgnoreCase);
             }
+            else
+            {
+                Debug.Assert(false, "Unknown name comparison.");
+            }
 
-            return string.Equals(Name, attributeName, StringComparison.OrdinalIgnoreCase);
+            if (!nameMatches)
+            {
+                return false;
+            }
+
+            switch (ValueComparison)
+            {
+                case TagHelperRequiredAttributeValueComparison.None:
+                    return true;
+                case TagHelperRequiredAttributeValueComparison.PrefixMatch: // Value starts with
+                    return attributeValue.StartsWith(Value, StringComparison.Ordinal);
+                case TagHelperRequiredAttributeValueComparison.SuffixMatch: // Value ends with
+                    return attributeValue.EndsWith(Value, StringComparison.Ordinal);
+                case TagHelperRequiredAttributeValueComparison.FullMatch: // Value equals
+                    return string.Equals(attributeValue, Value, StringComparison.Ordinal);
+                default:
+                    Debug.Assert(false, "Unknown value comparison.");
+                    return false;
+            }
         }
     }
 }

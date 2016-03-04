@@ -37,8 +37,8 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
             }
 
             return descriptorX != null &&
-                descriptorX.Operator == descriptorY.Operator &&
-                descriptorX.IsCssSelector == descriptorY.IsCssSelector &&
+                descriptorX.NameComparison == descriptorY.NameComparison &&
+                descriptorX.ValueComparison == descriptorY.ValueComparison &&
                 string.Equals(descriptorX.Name, descriptorY.Name, StringComparison.OrdinalIgnoreCase) &&
                 string.Equals(descriptorX.Value, descriptorY.Value, StringComparison.Ordinal);
         }
@@ -47,8 +47,8 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
         public virtual int GetHashCode(TagHelperRequiredAttributeDescriptor descriptor)
         {
             var hashCodeCombiner = HashCodeCombiner.Start();
-            hashCodeCombiner.Add(descriptor.Operator);
-            hashCodeCombiner.Add(descriptor.IsCssSelector);
+            hashCodeCombiner.Add(descriptor.NameComparison);
+            hashCodeCombiner.Add(descriptor.ValueComparison);
             hashCodeCombiner.Add(descriptor.Name, StringComparer.OrdinalIgnoreCase);
             hashCodeCombiner.Add(descriptor.Value, StringComparer.Ordinal);
 

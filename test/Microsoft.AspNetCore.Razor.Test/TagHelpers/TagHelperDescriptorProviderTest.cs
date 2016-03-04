@@ -124,7 +124,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "nodashprefix",
-                            Operator = '*'
+                            NameComparison = TagHelperRequiredAttributeNameComparison.PrefixMatch,
                         }
                     }
                 };
@@ -156,7 +156,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "prefix-",
-                            Operator = '*',
+                            NameComparison = TagHelperRequiredAttributeNameComparison.PrefixMatch,
                         }
                     }
                 };

@@ -33,7 +33,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "route-",
-                            Operator = '*'
+                            NameComparison = TagHelperRequiredAttributeNameComparison.PrefixMatch,
                         },
                         "ROUTE-area",
                         "manage",
@@ -43,7 +43,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "route-",
-                            Operator = '*'
+                            NameComparison = TagHelperRequiredAttributeNameComparison.PrefixMatch,
                         },
                         "routearea",
                         "manage",
@@ -53,7 +53,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "route-",
-                            Operator = '*'
+                            NameComparison = TagHelperRequiredAttributeNameComparison.PrefixMatch,
                         },
                         "route-",
                         "manage",
@@ -63,7 +63,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "key",
-                            IsCssSelector = true,
+                            NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                         },
                         "KeY",
                         "value",
@@ -73,7 +73,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "key",
-                            IsCssSelector = true,
+                            NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                         },
                         "keys",
                         "value",
@@ -83,9 +83,9 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "key",
+                            NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                             Value = "value",
-                            Operator = '=',
-                            IsCssSelector = true,
+                            ValueComparison = TagHelperRequiredAttributeValueComparison.FullMatch,
                         },
                         "key",
                         "value",
@@ -95,9 +95,9 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "key",
+                            NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                             Value = "value",
-                            Operator = '=',
-                            IsCssSelector = true,
+                            ValueComparison = TagHelperRequiredAttributeValueComparison.FullMatch,
                         },
                         "key",
                         "Value",
@@ -107,9 +107,9 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "class",
+                            NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                             Value = "btn",
-                            Operator = '^',
-                            IsCssSelector = true,
+                            ValueComparison = TagHelperRequiredAttributeValueComparison.PrefixMatch,
                         },
                         "class",
                         "btn btn-success",
@@ -119,9 +119,9 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "class",
+                            NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                             Value = "btn",
-                            Operator = '^',
-                            IsCssSelector = true,
+                            ValueComparison = TagHelperRequiredAttributeValueComparison.PrefixMatch,
                         },
                         "class",
                         "BTN btn-success",
@@ -131,9 +131,9 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "href",
+                            NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                             Value = "#navigate",
-                            Operator = '$',
-                            IsCssSelector = true,
+                            ValueComparison = TagHelperRequiredAttributeValueComparison.SuffixMatch,
                         },
                         "href",
                         "/home/index#navigate",
@@ -143,9 +143,9 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
                         new TagHelperRequiredAttributeDescriptor
                         {
                             Name = "href",
+                            NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                             Value = "#navigate",
-                            Operator = '$',
-                            IsCssSelector = true,
+                            ValueComparison = TagHelperRequiredAttributeValueComparison.SuffixMatch,
                         },
                         "href",
                         "/home/index#NAVigate",

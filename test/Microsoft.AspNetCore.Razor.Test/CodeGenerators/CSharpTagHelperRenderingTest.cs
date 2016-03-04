@@ -39,10 +39,10 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                         {
                             new TagHelperRequiredAttributeDescriptor
                             {
-                                IsCssSelector = true,
                                 Name = "href",
-                                Operator = '=',
+                                NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                                 Value = "~/",
+                                ValueComparison = TagHelperRequiredAttributeValueComparison.FullMatch,
                             }
                         },
                     },
@@ -55,17 +55,17 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                         {
                             new TagHelperRequiredAttributeDescriptor
                             {
-                                IsCssSelector = true,
                                 Name = "href",
-                                Operator = '^',
+                                NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                                 Value = "~/",
+                                ValueComparison = TagHelperRequiredAttributeValueComparison.PrefixMatch,
                             },
                             new TagHelperRequiredAttributeDescriptor
                             {
-                                IsCssSelector = true,
                                 Name = "href",
-                                Operator = '$',
-                                Value = "?hello=world"
+                                NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
+                                Value = "?hello=world",
+                                ValueComparison = TagHelperRequiredAttributeValueComparison.SuffixMatch,
                             }
                         },
                     },
@@ -82,10 +82,10 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                         {
                             new TagHelperRequiredAttributeDescriptor
                             {
-                                IsCssSelector = true,
                                 Name = "type",
-                                Operator = '=',
-                                Value = "text"
+                                NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
+                                Value = "text",
+                                ValueComparison = TagHelperRequiredAttributeValueComparison.FullMatch,
                             }
                         },
                     },
@@ -103,7 +103,7 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                             new TagHelperRequiredAttributeDescriptor
                             {
                                 Name = "ty",
-                                Operator = '*'
+                                NameComparison = TagHelperRequiredAttributeNameComparison.PrefixMatch,
                             }
                         },
                     },
@@ -116,10 +116,10 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                         {
                             new TagHelperRequiredAttributeDescriptor
                             {
-                                IsCssSelector = true,
                                 Name = "href",
-                                Operator = '^',
-                                Value = "~/"
+                                NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
+                                Value = "~/",
+                                ValueComparison = TagHelperRequiredAttributeValueComparison.PrefixMatch,
                             }
                         },
                     },
@@ -132,8 +132,8 @@ namespace Microsoft.AspNetCore.Razor.Test.Generator
                         {
                             new TagHelperRequiredAttributeDescriptor
                             {
-                                IsCssSelector = true,
-                                Name = "type"
+                                Name = "type",
+                                NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                             }
                         },
                     }
