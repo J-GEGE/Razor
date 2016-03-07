@@ -775,10 +775,10 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                 requiredAttributeDescriptors = null;
                 var descriptors = new List<TagHelperRequiredAttributeDescriptor>();
 
-                while (!AtEnd)
-                {
-                    PassOptionalWhitespace();
+                PassOptionalWhitespace();
 
+                do
+                {
                     TagHelperRequiredAttributeDescriptor descriptor;
                     if (At('['))
                     {
@@ -805,12 +805,8 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                     {
                         _index++;
 
-                        if (AtEnd)
+                        if (!EnsureNotAtEnd(errorSink))
                         {
-                            errorSink.OnError(
-                                SourceLocation.Zero,
-                                Resources.FormatTagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute(_requiredAttributes),
-                                length: 0);
                             return false;
                         }
                     }
@@ -822,7 +818,10 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                             length: 0);
                         return false;
                     }
+
+                    PassOptionalWhitespace();
                 }
+                while (!AtEnd);
 
                 requiredAttributeDescriptors = descriptors;
                 return true;
@@ -878,14 +877,13 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                 return attributeName;
             }
 
-            private TagHelperRequiredAttributeValueComparison ParseCssValueComparison(ErrorSink errorSink)
+            private TagHelperRequiredAttributeValueComparison? ParseCssValueComparison(ErrorSink errorSink)
             {
                 Debug.Assert(!AtEnd);
-                var valueComparison = TagHelperRequiredAttributeValueComparison.None;
+                TagHelperRequiredAttributeValueComparison valueComparison;
 
-                if (CssValueComparisons.ContainsKey(Current))
+                if (CssValueComparisons.TryGetValue(Current, out valueComparison))
                 {
-                    valueComparison = CssValueComparisons[Current];
                     var op = Current;
                     _index++;
 
@@ -894,6 +892,22 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                         // Two length operator (ex: ^=). Move past the second piece
                         _index++;
                     }
+                    else if (op != '=') // We're at an incomplete operator (ex: [foo^]
+                    {
+                        errorSink.OnError(
+                            SourceLocation.Zero,
+                            Resources.FormatTagHelperDescriptorFactory_PartialRequiredAttributeOperator(_requiredAttributes, op),
+                            length: 0);
+                        return null;
+                    }
+                }
+                else if (!At(']'))
+                {
+                    errorSink.OnError(
+                        SourceLocation.Zero,
+                        Resources.FormatTagHelperDescriptorFactory_InvalidRequiredAttributeOperator(Current, _requiredAttributes),
+                        length: 0);
+                    return null;
                 }
 
                 return valueComparison;
@@ -948,13 +962,6 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
 
                 var attributeName = ParseCssAttributeName(errorSink);
 
-                if (attributeName == null ||
-                    !ValidateName(attributeName, targetingAttributes: true, errorSink: errorSink))
-                {
-                    // Couldn't parse a valid attribute name.
-                    return null;
-                }
-
                 PassOptionalWhitespace();
 
                 if (!EnsureNotAtEnd(errorSink))
@@ -962,7 +969,18 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                     return null;
                 }
 
+                if (!ValidateName(attributeName, targetingAttributes: true, errorSink: errorSink))
+                {
+                    // Couldn't parse a valid attribute name.
+                    return null;
+                }
+
                 var valueComparison = ParseCssValueComparison(errorSink);
+
+                if (!valueComparison.HasValue)
+                {
+                    return null;
+                }
 
                 PassOptionalWhitespace();
 
@@ -986,11 +1004,19 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                     // Move past the ending bracket.
                     _index++;
                 }
-                else
+                else if (AtEnd)
                 {
                     errorSink.OnError(
                         SourceLocation.Zero,
                         Resources.FormatTagHelperDescriptorFactory_CouldNotFindMatchingEndBrace(_requiredAttributes),
+                        length: 0);
+                    return null;
+                }
+                else
+                {
+                    errorSink.OnError(
+                        SourceLocation.Zero,
+                        Resources.FormatTagHelperDescriptorFactory_InvalidRequiredAttributeCharacter(Current, _requiredAttributes),
                         length: 0);
                     return null;
                 }
@@ -1000,7 +1026,7 @@ namespace Microsoft.AspNetCore.Razor.Runtime.TagHelpers
                     Name = attributeName,
                     NameComparison = TagHelperRequiredAttributeNameComparison.FullMatch,
                     Value = value,
-                    ValueComparison = valueComparison,
+                    ValueComparison = valueComparison.Value,
                 };
             }
 

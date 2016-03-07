@@ -348,8 +348,9 @@ namespace Microsoft.AspNetCore.Razor.Parser.TagHelpers.Internal
                         continue;
                     }
 
+                    // We can assume the first span will always contain attributename=" and the last span will always
+                    // contain the final quote. Therefore, if the values not quoted there's no ending quote to skip.
                     var childOffset = 0;
-
                     if (childSpan.Symbols.Count > 0)
                     {
                         var potentialQuote = childSpan.Symbols[childSpan.Symbols.Count - 1] as HtmlSymbol;

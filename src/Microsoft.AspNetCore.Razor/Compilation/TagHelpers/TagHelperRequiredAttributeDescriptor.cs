@@ -38,7 +38,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
         /// </summary>
         /// <param name="attributeName">An HTML attribute name.</param>
         /// <param name="attributeValue">An HTML attribute value.</param>
-        /// <returns><c>true</c> if the current <see cref="TagHelperRequiredAttributeDescriptor"/> matches 
+        /// <returns><c>true</c> if the current <see cref="TagHelperRequiredAttributeDescriptor"/> matches
         /// <paramref name="attributeName"/> and <paramref name="attributeValue"/>; <c>false</c> otherwise.</returns>
         public bool IsMatch(string attributeName, string attributeValue)
         {
@@ -49,6 +49,7 @@ namespace Microsoft.AspNetCore.Razor.Compilation.TagHelpers
             }
             else if (NameComparison == TagHelperRequiredAttributeNameComparison.PrefixMatch)
             {
+                // attributeName cannot equal the Name if comparing as a PrefixMatch.
                 nameMatches = attributeName.Length != Name.Length &&
                     attributeName.StartsWith(Name, StringComparison.OrdinalIgnoreCase);
             }

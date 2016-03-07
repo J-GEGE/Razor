@@ -459,22 +459,6 @@ namespace Microsoft.AspNetCore.Razor.Runtime
         }
 
         /// <summary>
-        /// Reached the end of the required attribute '{0}' unexpectedly.
-        /// </summary>
-        internal static string TagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute
-        {
-            get { return GetString("TagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute"); }
-        }
-
-        /// <summary>
-        /// Reached the end of the required attribute '{0}' unexpectedly.
-        /// </summary>
-        internal static string FormatTagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute(object p0)
-        {
-            return string.Format(CultureInfo.CurrentCulture, GetString("TagHelperDescriptorFactory_UnexpectedEndOfRequiredAttribute"), p0);
-        }
-
-        /// <summary>
         /// Required attribute '{0}' has mismatched quotes '{1}' around value.
         /// </summary>
         internal static string TagHelperDescriptorFactory_InvalidRequiredAttributeMismatchedQuotes
@@ -488,6 +472,38 @@ namespace Microsoft.AspNetCore.Razor.Runtime
         internal static string FormatTagHelperDescriptorFactory_InvalidRequiredAttributeMismatchedQuotes(object p0, object p1)
         {
             return string.Format(CultureInfo.CurrentCulture, GetString("TagHelperDescriptorFactory_InvalidRequiredAttributeMismatchedQuotes"), p0, p1);
+        }
+
+        /// <summary>
+        /// Required attribute '{0}' has a partial CSS operator. '{1}' must be followed by an equals.
+        /// </summary>
+        internal static string TagHelperDescriptorFactory_PartialRequiredAttributeOperator
+        {
+            get { return GetString("TagHelperDescriptorFactory_PartialRequiredAttributeOperator"); }
+        }
+
+        /// <summary>
+        /// Required attribute '{0}' has a partial CSS operator. '{1}' must be followed by an equals.
+        /// </summary>
+        internal static string FormatTagHelperDescriptorFactory_PartialRequiredAttributeOperator(object p0, object p1)
+        {
+            return string.Format(CultureInfo.CurrentCulture, GetString("TagHelperDescriptorFactory_PartialRequiredAttributeOperator"), p0, p1);
+        }
+
+        /// <summary>
+        /// Invalid character '{0}' in required attribute '{1}'. Expected supported CSS operator or ']'.
+        /// </summary>
+        internal static string TagHelperDescriptorFactory_InvalidRequiredAttributeOperator
+        {
+            get { return GetString("TagHelperDescriptorFactory_InvalidRequiredAttributeOperator"); }
+        }
+
+        /// <summary>
+        /// Invalid character '{0}' in required attribute '{1}'. Expected supported CSS operator or ']'.
+        /// </summary>
+        internal static string FormatTagHelperDescriptorFactory_InvalidRequiredAttributeOperator(object p0, object p1)
+        {
+            return string.Format(CultureInfo.CurrentCulture, GetString("TagHelperDescriptorFactory_InvalidRequiredAttributeOperator"), p0, p1);
         }
 
         private static string GetString(string name, params string[] formatterNames)
